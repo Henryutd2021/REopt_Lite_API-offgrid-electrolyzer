@@ -507,6 +507,7 @@ class PVModel(models.Model):
 class WindModel(models.Model):
     # Inputs
     run_uuid = models.UUIDField(unique=True)
+    existing_kw = models.FloatField(null=True, blank=True)
     size_class = models.TextField(null=True, blank=True)
     wind_meters_per_sec = ArrayField(
             models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
