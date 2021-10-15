@@ -887,6 +887,13 @@ nested_input_definitions = {
           "restrict_to": ['residential', 'commercial', 'medium', 'large', None],
           "description": "Turbine size-class. One of [residential, commercial, medium, large]"
         },
+        "existing_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e5,
+          "default": 0.0,
+          "description": "Existing Wind size"
+        },
         "wind_meters_per_sec": {
           "type": "list_of_float",
           "description": "Data downloaded from Wind ToolKit for modeling wind turbine."
