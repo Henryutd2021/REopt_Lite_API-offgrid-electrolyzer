@@ -1548,6 +1548,7 @@ function add_null_generator_results(m, p, r::Dict)
 end
 
 function add_null_wind_results(m, p, r::Dict)
+    r["wind_net_fixed_om_costs"] = 0
 	r["WINDtoLoad"] = []
 	r["WINDtoGrid"] = []
     r["WINDtoMassProducer"] = []
@@ -1845,6 +1846,8 @@ function add_wind_results(m, p, r::Dict)
 			for t in m[:WindTechs], ts in p.TimeStep)
 	)
 	r["average_wind_energy_produced"] = round(value(m[:AverageWindProd]), digits=0)
+	WindPerUnitSizeOMCosts = @expression(m, sum(p.OMperUnitSize[t] * p.pwf_om * m[:dvSize][t] for t in m[:WindTechs]))
+    r["wind_net_fixed_om_costs"] = round(value(WindPerUnitSizeOMCosts) * m[:r_tax_fraction_owner], digits=0)
 	nothing
 end
 
