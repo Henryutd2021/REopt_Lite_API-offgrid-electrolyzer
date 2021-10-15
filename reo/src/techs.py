@@ -198,7 +198,7 @@ class Wind(Tech):
         'large': 0.12,
     }
 
-    def __init__(self, dfm, inputs_path, acres_per_kw=.03, time_steps_per_hour=1, prod_factor_series_kw=None, **kwargs):
+    def __init__(self, dfm, inputs_path, acres_per_kw=.03, existing_kw=0.0, time_steps_per_hour=1, prod_factor_series_kw=None, **kwargs):
         super(Wind, self).__init__(**kwargs)
 
         self.path_inputs = inputs_path
@@ -211,6 +211,7 @@ class Wind(Tech):
         self.installed_cost_us_dollars_per_kw = kwargs.get('installed_cost_us_dollars_per_kw')
         self.prod_factor_series_kw = prod_factor_series_kw
         self.sr_required_pct = kwargs.get("sr_required_pct")
+        self.existing_kw = existing_kw
 
         # if user hasn't entered the federal itc, itc value gets assigned based on size_class
         if self.incentives.federal.itc == 0.3:
