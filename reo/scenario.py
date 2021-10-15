@@ -309,7 +309,7 @@ def setup_scenario(self, run_uuid, data, raw_post):
                                 time_steps_per_hour=inputs_dict.get('time_steps_per_hour'),
                                 **inputs_dict['Site']['ElectricTariff'])
 
-        if inputs_dict["Site"]["Wind"]["max_kw"] > 0:
+        if inputs_dict["Site"]["Wind"]["max_kw"] > 0 or inputs_dict["Site"]["Wind"]["existing_kw"] > 0:
             wind = Wind(dfm=dfm, inputs_path=inputs_path, 
                         latitude=inputs_dict['Site'].get('latitude'),
                         longitude=inputs_dict['Site'].get('longitude'),
