@@ -227,13 +227,17 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
             upfront_capex += max(self.inputs["Generator"]["installed_cost_us_dollars_per_kw"]
                                  * (self.nested_outputs["Scenario"]["Site"]["Generator"]["size_kw"]
                                  - self.inputs["Generator"]["existing_kw"]), 0)
+            upfront_capex += max(self.inputs["Wind"]["installed_cost_us_dollars_per_kw"]
+                                 * (self.nested_outputs["Scenario"]["Site"]["Wind"]["size_kw"]
+                                    - self.inputs["Wind"]["existing_kw"]), 0)
             for pv in self.inputs["PV"]:
                 upfront_capex += max(pv["installed_cost_us_dollars_per_kw"]
                                  * (self.nested_outputs["Scenario"]["Site"]["PV"][pv["pv_number"]-1]["size_kw"]
                                  - pv["existing_kw"]), 0)
-            for tech in ["Storage", "Wind"]:
-                upfront_capex += (self.inputs[tech].get("installed_cost_us_dollars_per_kw") or 0) * \
-                                 (self.nested_outputs["Scenario"]["Site"][tech].get("size_kw") or 0)
+
+            upfront_capex += (self.inputs["Storage"].get("installed_cost_us_dollars_per_kw") or 0) * \
+                             (self.nested_outputs["Scenario"]["Site"]["Storage"].get("size_kw") or 0)
+
             # CHP.installed_cost_us_dollars_per_kw is now a list with potentially > 1 elements
             for tech in ["CHP"]:
                 cost_list = self.inputs[tech].get("installed_cost_us_dollars_per_kw") or []
