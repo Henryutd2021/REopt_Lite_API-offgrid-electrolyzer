@@ -547,6 +547,7 @@ class WindModel(models.Model):
 
     # Outputs
     size_kw = models.FloatField(null=True, blank=True)
+    existing_wind_om_cost_us_dollars = models.FloatField(null=True, blank=True)
     average_yearly_energy_produced_kwh = models.FloatField(null=True, blank=True)
     average_yearly_energy_exported_kwh = models.FloatField(null=True, blank=True)
     year_one_energy_produced_kwh = models.FloatField(null=True, blank=True)
