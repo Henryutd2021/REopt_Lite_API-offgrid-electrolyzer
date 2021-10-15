@@ -631,7 +631,7 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
                     self.nested_outputs["Scenario"]["Site"][name][
                         "year_one_power_production_series_kw"] = self.compute_total_power(name)
                     self.nested_outputs["Scenario"]["Site"][name][
-                        "existing_wind_total_variable_om_cost_us_dollars"] = self.results_dict.get(
+                        "existing_wind_om_cost_us_dollars"] = self.results_dict.get(
                         "wind_net_variable_om_costs")
                     if self.nested_outputs["Scenario"]["Site"][name]["size_kw"] > 0: #setting up
                         wind_model = WindModel.objects.get(run_uuid=meta['run_uuid'])
