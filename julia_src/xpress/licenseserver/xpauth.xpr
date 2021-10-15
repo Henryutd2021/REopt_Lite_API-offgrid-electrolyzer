@@ -1,0 +1,37 @@
+use_server server="my_server_name"
+license allow-clock-rollback allow-virtual-hostids any-subnet \
+	expiry="16-sep-2022" features="Hyper OptLib OptConsole \
+	MosRTLib MosMCLib mmxprs MosConsole BCL Integer Network \
+	Barrier Quadratic ParaMIP=1024 ParaBar=1024 SLPLib SLPConsole \
+	mmxslp MISLP OptJava MosRTJava MosMCJava BCLJava IVE mmsp \
+	kalis mmodbc mmoci mmxad" fico_xpress_release="8.12" \
+	floating="uncounted" hostid="any" platform="win32 win_x86_64 \
+	sun_sparc linux_x86 hpux_pa aix_ppc win_ia64 sun_sparc64 \
+	linux_x86_64 linux_ia64 hpux_pa64 hpux_ia64 aix_rs64 \
+	macos_x86_64" release="2021" server_hostid="mx4640b960e146" \
+	terminal-services sig="2220 f639 b666 10b1 4ad2 83a4 cd41 53c1 \
+	d939 3109 9461 2295 efd2 746a 7189 032f 1d81 69b7 95f1 fb11 \
+	78c5 6d25 41bb 94f3 9f8d 3597 b8c0 ef39 ae23 0eeb dd5b 1d5e"
+
+! FICO Xpress License Server
+! [UserID 1072, OrderID 2294, LicenseID 05695]
+! Created on 17 Sep 2021
+! By utdallas, University of Texas at Dallas 
+! For utdallas, University of Texas at Dallas 
+! Organisation: University of Texas at Dallas 
+! Notes:
+
+
+! Type: Floating
+! Expiry: 16 Sep 2022
+! Release: 8.12
+! Features: 
+!    Optimizer,Mosel,BCL,MIP,Barrier,Network,Quadratic,Par MIP,Par
+!    Barrier,SLP,MISLP,Java,Kalis,SP,ODBC,OCI,IVE,TS,Console,XAD
+! Platforms: Win32, Win64, Solaris32, Linux32, HPUX32, AIX32, WinIA64,
+! Solaris64, Linux64, LinuxIA64, HPUX64, HPUXIA64, AIX64, MacOSAMD64
+! Concurrent processes: unlimited
+! Number of parallel barrier threads: 1024
+! Number of parallel MIP threads: 1024
+
+! Hostid: mx4640b960e146		! Academic

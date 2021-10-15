@@ -1,0 +1,16 @@
+.git
+env/
+*.pyc
+*.rdb
+*.log
+*/.*
+static/files/*
+tmp/
+docs/
+Jenkinsfile
+*.md
+.helm
+.kube*
+werf.yaml
+**/*.dylib
+**/*.dll
