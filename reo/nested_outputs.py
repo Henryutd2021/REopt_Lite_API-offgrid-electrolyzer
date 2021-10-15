@@ -481,6 +481,11 @@ nested_output_definitions = {
                   "description": "Recommended wind system size",
                   "units": "kW"
                 },
+              "existing_wind_om_cost_us_dollars": {
+                "type": "float",
+                "description": "Lifetime O&M cost for existing Wind system.",
+                "units": "$"
+                },
                 "average_yearly_energy_produced_kwh": {
                   "type": "float",
                   "description": "Average energy produced by the wind system over one year",
