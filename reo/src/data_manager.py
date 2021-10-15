@@ -168,6 +168,10 @@ class DataManager:
         self.windnm = copy.deepcopy(wind)
         self.windnm.nmil_regime = 'NMtoIL'
 
+        if self.wind.existing_kw > 0:
+            if 'wind' not in self.bau_techs:
+                self.bau_techs.append('wind')
+
     def add_util(self, util):
         self.util = util
 
