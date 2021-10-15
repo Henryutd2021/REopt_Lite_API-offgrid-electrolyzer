@@ -250,6 +250,7 @@ def check_common_outputs(Test, d_calculated, d_expected):
             Test.assertTrue(abs((float(c['lcc_bau'] or 0) - float(c['total_energy_cost_bau'] or 0) - float(c['total_min_charge_adder'] or 0)
                             - float(c['total_demand_cost_bau'] or 0) - float(c['existing_pv_om_cost_us_dollars'] or 0)
                             - float(c['total_fixed_cost_bau'] or 0)
+                            - float(c['existing_wind_om_cost_us_dollars'] or 0)
                             - float(c['existing_gen_total_variable_om_cost_us_dollars'] or 0)
                             - float(c['existing_gen_total_fixed_om_cost_us_dollars'] or 0)
                             - float(c['existing_gen_total_fuel_cost_us_dollars'] or 0)
