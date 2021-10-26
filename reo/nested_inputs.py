@@ -2551,7 +2551,39 @@ nested_input_definitions = {
           "default": 0.0,
           "description": "Percent of upfront project costs to depreciate under MACRS"
         }        
-      }      
+      },
+      "Tank": {
+        "min_kg": {
+          "type": "float", "min": 0.0, "max": 1.0e6, "default": 0.0,
+          "description": "Minimum Hydrogen tank size constraint for optimization"
+        },
+        "max_kg": {
+          "type": "float", "min": 0.0, "max": 1.0e6, "default": 0.0,
+          "description": "Maximum Hydrogen tank size constraint for optimization. Set to zero to disable storage"
+        },
+        "installed_cost_us_dollars_per_kg": {
+          "type": "float", "min": 0.0, "max": 10000.0, "default": 1168,
+          "description": "installation cost (e.g. volume of the tank)"
+        },
+
+        "om_cost_us_dollars_per_kg": {
+          "type": "float", "min": 0.0, "max": 1000.0, "default": 116.8,
+          "description": "Yearly fixed O&M cost dependent on storage energy size"
+        },
+        "macrs_option_years": {
+          "type": "int",
+          "restrict_to": macrs_schedules,
+          "default": 0,
+          "description": "MACRS schedule for financial analysis. Set to zero to disable"
+        },
+        "macrs_bonus_pct": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 0.0,
+          "description": "Percent of upfront project costs to depreciate under MACRS"
+        }
+      }
     }
   }
 }
