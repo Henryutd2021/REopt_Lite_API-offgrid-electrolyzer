@@ -1394,7 +1394,24 @@ nested_output_definitions = {
                   "description": "Total life cycle cost of feedstock consumed by MassProducer",
                   "units": "$"
                 }
-            }
+            },
+              "Tank": {
+                "size_kg": {
+                  "type": float,
+                  "description": "Optimal hydrogen tank capacity",
+                  "units": "kg"
+                },
+                "year_one_hydrogen_soc_series": {
+                  "type": list_of_float,
+                  "description": "Year one hourly time series of hydrogen state of charge",
+                  "units": "kg/hr"
+                },
+                "year_one_hydrogen_to_fuel_cell_series_kg_per_hr": {
+                  "type": "list_of_float",
+                  "description": "Year one hourly time series of tank serving Fuelcell consumption",
+                  "units": "kg/hr"
+                },
+              }
           	}
         }
     },
