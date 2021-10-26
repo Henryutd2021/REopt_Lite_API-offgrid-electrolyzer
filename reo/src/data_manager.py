@@ -85,6 +85,7 @@ class DataManager:
         self.tes_kwh_to_gal = {}
         self.off_grid_flag = None
         self.massproducer = None
+        self.tank = None
 
         # following attributes used to pass data to process_results.py
         # If we serialize the python classes then we could pass the objects between Celery tasks
@@ -211,6 +212,9 @@ class DataManager:
         self.cold_tes = cold_tes
         self.tes_kwh_to_gal["ColdTES"] = 1.0 / self.cold_tes.gal_to_kwh_conversion
         # All attributes are written in finalize method because they are stacked 1..2 for hot_tes..cold_tes storages
+
+    def add_tank(self, tank):
+        self.tank = tank
 
     def add_elec_tariff(self, elec_tariff):
         self.elec_tariff = elec_tariff
