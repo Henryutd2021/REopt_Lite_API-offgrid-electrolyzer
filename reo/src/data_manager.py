@@ -1129,14 +1129,35 @@ class DataManager:
             storage_max_energy.append(self.cold_tes.max_kwht)
             storage_decay_rate.append(self.cold_tes.thermal_decay_rate_fraction)
 
+        if self.tank is not None:
+            TankCostPerKg = setup_capital_cost_incentive(self.tank.installed_cost_us_dollars_per_kg,  # use full cost as basis
+                                                        0,
+                                                        0,
+                                                        sf.owner_discount_pct,
+                                                        sf.owner_tax_pct,
+                                                        0,
+                                                        self.tank.incentives.macrs_schedule,
+                                                        self.tank.incentives.macrs_bonus_pct,
+                                                        0)
+            storage_techs.append('tank')
+            storage_power_cost.append(0.0)
+            storage_energy_cost.append(TankCostPerKg)
+            #Note: power not sized in REopt; assume full charge or discharge in one timestep.
+            storage_min_power.append(self.tank.min_kg / self.steplength)
+            storage_max_power.append(self.tank.max_kg / self.steplength)
+            storage_min_energy.append(self.tank.min_kg)
+            storage_max_energy.append(self.tank.max_kg)
+            # TODO storage_decay_rate.append(self.cold_tes.thermal_decay_rate_fraction)
+
         thermal_storage_techs = storage_techs[1:]
         hot_tes_techs = [] if self.hot_tes is None else ['HotTES']
         cold_tes_techs = [] if self.cold_tes is None else ['ColdTES']
+        tank_techs = [] if self.tank is None else ['Tank']
 
         return storage_techs, thermal_storage_techs, hot_tes_techs, \
             cold_tes_techs, storage_power_cost, storage_energy_cost, \
             storage_min_power, storage_max_power, storage_min_energy, \
-            storage_max_energy, storage_decay_rate
+            storage_max_energy, storage_decay_rate, tank_techs
 
     def _get_export_curtailment_params(self, techs, export_rates, net_metering_limit_kw):
         """
@@ -1278,7 +1299,7 @@ class DataManager:
         storage_techs, thermal_storage_techs, hot_tes_techs, \
             cold_tes_techs, storage_power_cost, storage_energy_cost, \
             storage_min_power, storage_max_power, storage_min_energy, \
-            storage_max_energy, storage_decay_rate = self._get_REopt_storage_techs_and_params()
+            storage_max_energy, storage_decay_rate, tank_techs = self._get_REopt_storage_techs_and_params()
 
         parser = UrdbParse(big_number=big_number, elec_tariff=self.elec_tariff,
                            techs=get_techs_not_none(self.available_techs, self),
@@ -1606,8 +1627,8 @@ class DataManager:
             'StorageMaxSizeEnergy': storage_max_energy,
             'StorageMinSizePower': storage_min_power,
             'StorageMaxSizePower': storage_max_power,
-            'StorageMinSOC': [self.storage.soc_min_pct, self.hot_tes.soc_min_pct, self.cold_tes.soc_min_pct],
-            'StorageInitSOC': [self.storage.soc_init_pct, self.hot_tes.soc_init_pct, self.cold_tes.soc_init_pct],
+            'StorageMinSOC': [self.storage.soc_min_pct, self.hot_tes.soc_min_pct, self.cold_tes.soc_min_pct, self.tank.soc_min_pct],
+            'StorageInitSOC': [self.storage.soc_init_pct, self.hot_tes.soc_init_pct, self.cold_tes.soc_init_pct, self.tank.soc_init_pct],
             'StorageCanGridCharge': self.storage.canGridCharge,
             'SegmentMinSize': segment_min_size,
             'SegmentMaxSize': segment_max_size,
@@ -1638,6 +1659,7 @@ class DataManager:
             'ThermalStorage': thermal_storage_techs,
             'HotTES': hot_tes_techs,
             'ColdTES': cold_tes_techs,
+            'Tank': tank_techs,
             'CHPTechs': chp_techs,
             'ElectricChillers': electric_chillers,
             'AbsorptionChillers': absorption_chillers,
@@ -1804,6 +1826,7 @@ class DataManager:
             'ThermalStorage': thermal_storage_techs,
             'HotTES': hot_tes_techs,
             'ColdTES': cold_tes_techs,
+            'Tank': tank_techs,
             'CHPTechs': chp_techs_bau,
             'ElectricChillers': electric_chillers_bau,
             'AbsorptionChillers': absorption_chillers_bau,
