@@ -178,3 +178,25 @@ class ColdTES(object):
         self.incentives = TESIncentives(self.macrs_option_years, self.macrs_bonus_pct)
 
         dfm.add_cold_tes(self)
+
+
+class Tank(object):
+    """
+    REopt class for hydrogen storage.
+    All default values in kwargs set by validator using nested_input_definitions.
+    """
+
+    def __init__(self, dfm, **kwargs):
+        # Assign all items in kwargs explicitly to the class
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+        self.min_kwh = self.min_kg
+        self.max_kwh = self.max_kg
+        self.installed_cost_us_dollars_per_kg = self.installed_cost_us_dollars_per_kg
+        self.om_cost_us_dollars_per_kg = self.om_cost_us_dollars_per_kg
+        self.can_supply_fc = kwargs.get("can_supply_fc")
+
+        # TODO self.incentives = TESIncentives(self.macrs_option_years, self.macrs_bonus_pct)
+
+        dfm.add_tank(self)
