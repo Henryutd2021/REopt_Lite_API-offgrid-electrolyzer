@@ -1137,27 +1137,6 @@ class MassProducerModel(models.Model):
 
         return obj
 
-class MessageModel(models.Model):
-    """
-    For Example:
-    {"messages":{
-                "warnings": "This is a warning message.",
-                "error": "REopt had an error."
-                }
-    }
-    """
-    message_type = models.TextField(null=True, blank=True, default='')
-    message = models.TextField(null=True, blank=True, default='')
-    run_uuid = models.UUIDField(unique=False)
-    description = models.TextField(null=True, blank=True, default='')
-
-    @classmethod
-    def create(cls, **kwargs):
-        obj = cls(**kwargs)
-        obj.save()
-
-        return obj
-
 class TankModel(models.Model):
     # Inputs
     run_uuid = models.UUIDField(unique=True)
@@ -1175,6 +1154,27 @@ class TankModel(models.Model):
             models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
     year_one_hydrogen_to_fuel_cell_series_kg_per_hr = ArrayField(
             models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
+
+    @classmethod
+    def create(cls, **kwargs):
+        obj = cls(**kwargs)
+        obj.save()
+
+        return obj
+
+class MessageModel(models.Model):
+    """
+    For Example:
+    {"messages":{
+                "warnings": "This is a warning message.",
+                "error": "REopt had an error."
+                }
+    }
+    """
+    message_type = models.TextField(null=True, blank=True, default='')
+    message = models.TextField(null=True, blank=True, default='')
+    run_uuid = models.UUIDField(unique=False)
+    description = models.TextField(null=True, blank=True, default='')
 
     @classmethod
     def create(cls, **kwargs):
@@ -1237,6 +1237,7 @@ class ModelManager(object):
         self.steam_turbineM = None
         self.ghpM = None
         self.mass_producerM = None
+        self.tankM = None
 
     def create_and_save(self, data):
         """
@@ -1290,6 +1291,8 @@ class ModelManager(object):
         self.ghpM = GHPModel.create(run_uuid=self.scenarioM.run_uuid, **attribute_inputs(d['Site']['GHP']))
         self.mass_producerM = MassProducerModel.create(run_uuid=self.scenarioM.run_uuid,
                                            **attribute_inputs(d['Site']['MassProducer']))
+        self.tankM = TankModel.create(run_uuid=self.scenarioM.run_uuid,
+                                                       **attribute_inputs(d['Site']['Tank']))
         for message_type, message in data['messages'].items():
             MessageModel.create(run_uuid=self.scenarioM.run_uuid, message_type=message_type, message=message)
 
@@ -1331,6 +1334,7 @@ class ModelManager(object):
         SteamTurbineModel.objects.filter(run_uuid=run_uuid).delete()
         GHPModel.objects.filter(run_uuid=run_uuid).delete()
         MassProducerModel.objects.filter(run_uuid=run_uuid).delete()
+        TankModel.objects.filter(run_uuid=run_uuid).delete()
         MessageModel.objects.filter(run_uuid=run_uuid).delete()
         ErrorModel.objects.filter(run_uuid=run_uuid).delete()
 
@@ -1372,6 +1376,7 @@ class ModelManager(object):
         SteamTurbineModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['SteamTurbine']))
         GHPModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['GHP']))
         MassProducerModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['MassProducer']))
+        TankModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['Tank']))
 
         for message_type, message in data['messages'].items():
             if len(MessageModel.objects.filter(run_uuid=run_uuid, message=message)) > 0:
@@ -1473,7 +1478,8 @@ class ModelManager(object):
         # add try/except for get fail / bad run_uuid
         site_keys = ['PV', 'Storage', 'Financial', 'LoadProfile', 'LoadProfileBoilerFuel', 'LoadProfileChillerThermal',
                      'ElectricTariff', 'FuelTariff', 'Generator', 'Wind', 'CHP', 'Boiler', 'ElectricChiller',
-                     'AbsorptionChiller', 'HotTES', 'ColdTES', 'NewBoiler', 'SteamTurbine', 'GHP', 'MassProducer']
+                     'AbsorptionChiller', 'HotTES', 'ColdTES', 'NewBoiler', 'SteamTurbine', 'GHP', 'MassProducer',
+                     'Tank']
 
         resp = dict()
         resp['outputs'] = dict()
@@ -1577,6 +1583,10 @@ class ModelManager(object):
         massproducer_record = MassProducerModel.objects.filter(run_uuid=run_uuid) or {}
         if not massproducer_record == {}:
             resp['outputs']['Scenario']['Site']['MassProducer'] = remove_ids(model_to_dict(massproducer_record[0]))
+
+        tank_record = TankModel.objects.filter(run_uuid=run_uuid) or {}
+        if not tank_record == {}:
+            resp['outputs']['Scenario']['Site']['Tank'] = remove_ids(model_to_dict(tank_record[0]))
 
         resp['outputs']['Scenario']['Site']['PV'] = []
         for x in PVModel.objects.filter(run_uuid=run_uuid).order_by('pv_number'):
