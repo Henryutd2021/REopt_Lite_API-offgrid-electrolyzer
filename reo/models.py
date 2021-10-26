@@ -1158,6 +1158,30 @@ class MessageModel(models.Model):
 
         return obj
 
+class TankModel(models.Model):
+    # Inputs
+    run_uuid = models.UUIDField(unique=True)
+    min_kg = models.FloatField(null=True, blank=True)
+    max_kg = models.FloatField(null=True, blank=True)
+    installed_cost_us_dollars_per_gal = models.FloatField(null=True, blank=True)
+    om_cost_us_dollars_per_gal = models.FloatField(null=True, blank=True)
+    macrs_option_years = models.IntegerField(null=True, blank=True)
+    macrs_bonus_pct = models.FloatField(null=True, blank=True)
+    can_supply_fc = models.BooleanField(null=True, blank=True)
+
+    # Outputs
+    size_kg = models.FloatField(null=True, blank=True)
+    year_one_hydrogen_soc_series = ArrayField(
+            models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
+    year_one_hydrogen_to_fuel_cell_series_kg_per_hr = ArrayField(
+            models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
+
+    @classmethod
+    def create(cls, **kwargs):
+        obj = cls(**kwargs)
+        obj.save()
+
+        return obj
 
 class BadPost(models.Model):
     run_uuid = models.UUIDField(unique=True)
