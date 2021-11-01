@@ -2552,6 +2552,211 @@ nested_input_definitions = {
           "description": "Percent of upfront project costs to depreciate under MACRS"
         }        
       },
+      "FuelCell":{
+        "min_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "Minimum fuel cell size constraint for optimization"
+        },
+        "max_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 1.0e9,
+          "description": "Maximum fuel cell size constraint for optimization. Set to zero to disable fuel cell"
+        },
+        "installed_cost_us_dollars_per_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e5,
+          "default": 500.0,
+          "description": "Installed fuel cell cost in $/kW"
+        },
+        "om_cost_us_dollars_per_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e3,
+          "default": 10.0,
+          "description": "Annual fuel cell fixed operations and maintenance costs in $/kW"
+        },
+        "om_cost_us_dollars_per_kwh": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e3,
+          "default": 0.00,
+          "description": "fuel cell per unit production (variable) operations and maintenance costs in $/kWh"
+        },
+        "Hydrogen_slope_kg_per_kwh": {
+          "type": "float",
+          "min": 0.0,
+          "max": 10,
+          "default": 0.076,
+          "description": "Fuel cell burn rate in gallons/kWh."
+        },
+        "hydrogen_intercept_kg_per_hr": {
+          "type": "float",
+          "min": 0.0,
+          "max": 10,
+          "default": 0.0,
+          "description": "Fuel cell consumption curve y-intercept in kg per hour."
+        },
+        "min_turn_down_pct": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 0.0,
+          "description": "Minimum fuel cell loading in percent of capacity (size_kw)."
+        },
+        "generator_sells_energy_back_to_grid": {
+          "default": False,
+          "type": "bool",
+          "description": "If there is existing fuel cell, must specify whether it should run only during grid outage or all the time in the bau case."
+        },
+        "macrs_option_years": {
+          "type": "int",
+          "restrict_to": macrs_schedules,
+          "default": 0,
+          "description": "MACRS schedule for financial analysis. Set to zero to disable"
+        },
+        "macrs_bonus_pct": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 1.0,
+          "description": "Percent of upfront project costs to depreciate under MACRS"
+        },
+        "macrs_itc_reduction": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 0.0,
+          "description": "Percent of the full ITC that depreciable basis is reduced by"
+        },
+        "federal_itc_pct": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 0.0,
+          "description": "Percent federal capital cost incentive"
+        },
+        "state_ibi_pct": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 0.0,
+          "description": "Percent of upfront project costs to discount under state investment based incentives"
+        },
+        "state_ibi_max_us_dollars": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e10,
+          "default": 0.0,
+          "description": "Maximum rebate allowed under state investment based incentives"
+        },
+        "utility_ibi_pct": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 0.0,
+          "description": "Percent of upfront project costs to discount under utility investment based incentives"
+        },
+        "utility_ibi_max_us_dollars": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e10,
+          "default": 0.0,
+          "description": "Maximum rebate allowed under utility investment based incentives"
+        },
+        "federal_rebate_us_dollars_per_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "Federal rebate based on installed capacity"
+        },
+        "state_rebate_us_dollars_per_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "State rebates based on installed capacity"
+        },
+        "state_rebate_max_us_dollars": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e10,
+          "default": 0.0,
+          "description": "Maximum rebate allowed under state rebates"
+        },
+        "utility_rebate_us_dollars_per_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "Utility rebates based on installed capacity"
+        },
+        "utility_rebate_max_us_dollars": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e10,
+          "default": 0.0,
+          "description": "Maximum rebate allowed under utility rebates"
+        },
+        "pbi_us_dollars_per_kwh": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "Production-based incentive value"
+        },
+        "pbi_max_us_dollars": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "Maximum rebate allowed under utility production-based incentives"
+        },
+        "pbi_years": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "Duration of production-based incentives from installation date"
+        },
+        "pbi_system_max_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "Maximum system size for which production-based incentives apply"
+        },
+        "can_net_meter": {
+          "type": "bool",
+          "default": False,
+          "description": "True/False for if technology has option to participate in net metering agreement with utility. Note that a technology can only participate in either net metering or wholesale rates (not both)."
+        },
+        "can_wholesale": {
+          "type": "bool",
+          "default": False,
+          "description": "True/False for if technology has option to export energy that is compensated at the wholesale_rate_us_dollars_per_kwh. Note that a technology can only participate in either net metering or wholesale rates (not both)."
+        },
+        "can_export_beyond_site_load": {
+          "type": "bool",
+          "default": False,
+          "description": "True/False for if technology can export energy beyond the annual site load (and be compensated for that energy at the wholesale_rate_above_site_load_us_dollars_per_kwh)."
+        },
+        "can_curtail": {
+          "type": "bool",
+          "default": False,
+          "description": "True/False for if technology can curtail energy produced."
+        },
+        "useful_life_years": {
+          "type": "float", "min": 0.0, "max": max_years, "default": analysis_years,
+          "description": "Number of years asset can be used for before replacement"
+        }
+      },
       "Tank": {
         "min_kg": {
           "type": "float", "min": 0.0, "max": 1.0e6, "default": 0.0,
