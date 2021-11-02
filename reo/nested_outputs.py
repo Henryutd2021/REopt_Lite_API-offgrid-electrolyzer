@@ -1411,7 +1411,39 @@ nested_output_definitions = {
                   "description": "Year one hourly time series of tank serving Fuelcell consumption",
                   "units": "kg/hr"
                 },
-              }
+              },
+              "FuelCell": {
+                "size_kw": {
+                  "type": "float",
+                  "description": "Optimal fuel cell system size",
+                  "units": "kW"
+                },
+                "hydrogen_used_kg": {
+                  "type": "float",
+                  "description": "hydrogen used.",
+                  "units": "Kg"
+                },
+                "average_yearly_energy_produced_kwh": {
+                  "type": "float",
+                  "description": "Average annual energy produced by the fuel cell over one year",
+                  "units": "kWh"
+                },
+                "total_variable_om_cost_us_dollars": {
+                  "type": "float",
+                  "description": "Total lifecycle variable (based on kWh produced) O&M cost for existing + recommended diesel generator system",
+                  "units": "$"
+                },
+                "year_one_variable_om_cost_us_dollars": {
+                  "type": "float",
+                  "description": "Year one variable (based on kwh produced) O&M cost for existing + recommended diesel generator system",
+                  "units": "$"
+                },
+                "hydrogen_used_series_kg": {
+                  "type": "list_of_float",
+                  "description": "Temp variable for hydrogen usage at each hour",
+                  "units": "kg"
+                },
+              },
           	}
         }
     },
