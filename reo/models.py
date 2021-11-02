@@ -1162,6 +1162,55 @@ class TankModel(models.Model):
 
         return obj
 
+class FuelCellModel(models.Model):
+    # Inputs
+    run_uuid = models.UUIDField(unique=True)
+    min_kw = models.FloatField(null=True, blank=True)
+    max_kw = models.FloatField(null=True, blank=True)
+    installed_cost_us_dollars_per_kw = models.FloatField(null=True, blank=True,)
+    om_cost_us_dollars_per_kw = models.FloatField(null=True, blank=True)
+    om_cost_us_dollars_per_kwh = models.FloatField(null=True, blank=True)
+    hydrogen_slope_kg_per_kwh = models.FloatField(null=True, blank=True)
+    hydrogen_intercept_kg_per_hr = models.FloatField(null=True, blank=True)
+    min_turn_down_pct = models.FloatField(null=True, blank=True)
+    macrs_option_years = models.IntegerField(null=True, blank=True)
+    macrs_bonus_pct = models.FloatField(null=True, blank=True)
+    macrs_itc_reduction = models.FloatField(null=True, blank=True)
+    federal_itc_pct = models.FloatField(null=True, blank=True)
+    state_ibi_pct = models.FloatField(null=True, blank=True)
+    state_ibi_max_us_dollars = models.FloatField(null=True, blank=True)
+    utility_ibi_pct = models.FloatField(null=True, blank=True)
+    utility_ibi_max_us_dollars = models.FloatField(null=True, blank=True)
+    federal_rebate_us_dollars_per_kw = models.FloatField(null=True, blank=True)
+    state_rebate_us_dollars_per_kw = models.FloatField(null=True, blank=True)
+    state_rebate_max_us_dollars = models.FloatField(null=True, blank=True)
+    utility_rebate_us_dollars_per_kw = models.FloatField(null=True, blank=True)
+    utility_rebate_max_us_dollars = models.FloatField(null=True, blank=True)
+    pbi_us_dollars_per_kwh = models.FloatField(null=True, blank=True)
+    pbi_max_us_dollars = models.FloatField(null=True, blank=True)
+    pbi_years = models.FloatField(null=True, blank=True)
+    pbi_system_max_kw = models.FloatField(null=True, blank=True)
+    can_net_meter = models.BooleanField(null=True, blank=True)
+    can_wholesale = models.BooleanField(null=True, blank=True)
+    can_export_beyond_site_load = models.BooleanField(null=True, blank=True)
+    can_curtail = models.BooleanField(null=True, blank=True)
+    useful_life_years = models.FloatField(null=True, blank=True)
+
+    # Outputs
+    hydrogen_used_kg = models.FloatField(null=True, blank=True)
+    size_kw = models.FloatField(null=True, blank=True)
+    average_yearly_energy_produced_kwh = models.FloatField(null=True, blank=True)
+    year_one_variable_om_cost_us_dollars = models.FloatField(null=True, blank=True)
+    total_variable_om_cost_us_dollars = models.FloatField(null=True, blank=True)
+    hydrogen_used_series_kg = ArrayField(
+            models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
+
+    @classmethod
+    def create(cls, **kwargs):
+        obj = cls(**kwargs)
+        obj.save()
+        return obj
+
 class MessageModel(models.Model):
     """
     For Example:
@@ -1238,6 +1287,7 @@ class ModelManager(object):
         self.ghpM = None
         self.mass_producerM = None
         self.tankM = None
+        self.fuelcellM = None
 
     def create_and_save(self, data):
         """
@@ -1293,6 +1343,8 @@ class ModelManager(object):
                                            **attribute_inputs(d['Site']['MassProducer']))
         self.tankM = TankModel.create(run_uuid=self.scenarioM.run_uuid,
                                                        **attribute_inputs(d['Site']['Tank']))
+        self.fuelcellM = FuelCellModel.create(run_uuid=self.scenarioM.run_uuid,
+                                                **attribute_inputs(d['Site']['FuelCell']))
         for message_type, message in data['messages'].items():
             MessageModel.create(run_uuid=self.scenarioM.run_uuid, message_type=message_type, message=message)
 
@@ -1336,6 +1388,7 @@ class ModelManager(object):
         MassProducerModel.objects.filter(run_uuid=run_uuid).delete()
         TankModel.objects.filter(run_uuid=run_uuid).delete()
         MessageModel.objects.filter(run_uuid=run_uuid).delete()
+        FuelCellModel.objects.filter(run_uuid=run_uuid).delete()
         ErrorModel.objects.filter(run_uuid=run_uuid).delete()
 
     @staticmethod
@@ -1377,6 +1430,7 @@ class ModelManager(object):
         GHPModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['GHP']))
         MassProducerModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['MassProducer']))
         TankModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['Tank']))
+        FuelCellModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['FuelCell']))
 
         for message_type, message in data['messages'].items():
             if len(MessageModel.objects.filter(run_uuid=run_uuid, message=message)) > 0:
@@ -1479,7 +1533,7 @@ class ModelManager(object):
         site_keys = ['PV', 'Storage', 'Financial', 'LoadProfile', 'LoadProfileBoilerFuel', 'LoadProfileChillerThermal',
                      'ElectricTariff', 'FuelTariff', 'Generator', 'Wind', 'CHP', 'Boiler', 'ElectricChiller',
                      'AbsorptionChiller', 'HotTES', 'ColdTES', 'NewBoiler', 'SteamTurbine', 'GHP', 'MassProducer',
-                     'Tank']
+                     'Tank', 'FuelCell']
 
         resp = dict()
         resp['outputs'] = dict()
@@ -1587,6 +1641,10 @@ class ModelManager(object):
         tank_record = TankModel.objects.filter(run_uuid=run_uuid) or {}
         if not tank_record == {}:
             resp['outputs']['Scenario']['Site']['Tank'] = remove_ids(model_to_dict(tank_record[0]))
+
+        fuelcell_record = FuelCellModel.objects.filter(run_uuid=run_uuid) or {}
+        if not fuelcell_record == {}:
+            resp['outputs']['Scenario']['Site']['FuelCell'] = remove_ids(model_to_dict(fuelcell_record[0]))
 
         resp['outputs']['Scenario']['Site']['PV'] = []
         for x in PVModel.objects.filter(run_uuid=run_uuid).order_by('pv_number'):
