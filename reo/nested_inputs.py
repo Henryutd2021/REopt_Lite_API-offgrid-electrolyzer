@@ -2609,11 +2609,6 @@ nested_input_definitions = {
           "default": 0.0,
           "description": "Minimum fuel cell loading in percent of capacity (size_kw)."
         },
-        "generator_sells_energy_back_to_grid": {
-          "default": False,
-          "type": "bool",
-          "description": "If there is existing fuel cell, must specify whether it should run only during grid outage or all the time in the bau case."
-        },
         "macrs_option_years": {
           "type": "int",
           "restrict_to": macrs_schedules,
