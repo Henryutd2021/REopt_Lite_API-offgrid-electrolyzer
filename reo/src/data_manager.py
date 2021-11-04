@@ -96,9 +96,9 @@ class DataManager:
         self.year_one_demand_cost_series_us_dollars_per_kw = []
 
         self.available_techs = ['pv1', 'pv1nm', 'wind', 'windnm', 'generator', 'chp', 'boiler',
-                                'elecchl', 'absorpchl', 'newboiler', 'steamturbine', 'massproducer']  # order is critical for REopt! Note these are passed to reopt.jl as uppercase
+                                'elecchl', 'absorpchl', 'newboiler', 'steamturbine', 'massproducer', 'fuelcell']  # order is critical for REopt! Note these are passed to reopt.jl as uppercase
         self.available_tech_classes = ['PV1', 'WIND', 'GENERATOR', 'CHP', 'BOILER',
-                                       'ELECCHL', 'ABSORPCHL', 'NEWBOILER', 'STEAMTURBINE', 'MASSPRODUCER']  # this is a REopt 'class', not a python class
+                                       'ELECCHL', 'ABSORPCHL', 'NEWBOILER', 'STEAMTURBINE', 'MASSPRODUCER', 'FUELCELL']  # this is a REopt 'class', not a python class
         self.bau_techs = []
         self.NMILRegime = ['BelowNM', 'NMtoIL', 'AboveIL']
         self.fuel_burning_techs = ['GENERATOR', 'CHP']
@@ -238,6 +238,9 @@ class DataManager:
                                                         ghp.installed_cost_us_dollars_per_kw[1] *
                                                         ghp.heatpump_capacity_tons,
                               "om_cost_year_one_dollars": ghp.om_cost_year_one})
+
+    def add_fuelcell(self, fuelcell):
+        self.fuelcell = fuelcell
 
     def _get_REopt_pwfs(self, techs):
         sf = self.site.financial
@@ -820,7 +823,7 @@ class DataManager:
                     om_cost_us_dollars_per_kw.append(eval('self.' + tech + '.om_cost_us_dollars_per_kw'))
 
                 # Only certain techs have variable o&m cost, and CHP also has a unique hourly-operating O&M
-                if tech.lower() in ['generator', 'newboiler', 'steamturbine', 'massproducer']:
+                if tech.lower() in ['generator', 'newboiler', 'steamturbine', 'massproducer', 'fuelcell']:
                     om_cost_us_dollars_per_kwh.append(float(eval('self.' + tech + '.om_cost_us_dollars_per_kwh')))
                     om_cost_us_dollars_per_hr_per_kw_rated.append(0.0)
                 elif tech.lower() == 'chp':
@@ -1368,8 +1371,8 @@ class DataManager:
         techs_no_turndown = [t for t in reopt_techs if t.startswith("PV") or t.startswith("WIND")]
         techs_no_turndown_bau = [t for t in reopt_techs_bau if t.startswith("PV") or t.startswith("WIND")]
 
-        electric_techs = [t for t in reopt_techs if t.startswith("PV") or t.startswith("WIND") or t.startswith("GENERATOR") or t.startswith("CHP") or t.lower().startswith('steamturbine')]
-        electric_techs_bau = [t for t in reopt_techs_bau if t.startswith("PV") or t.startswith("WIND") or t.startswith("GENERATOR") or t.startswith("CHP") or t.lower().startswith('steamturbine')]
+        electric_techs = [t for t in reopt_techs if t.startswith("PV") or t.startswith("WIND") or t.startswith("GENERATOR") or t.startswith("CHP") or t.lower().startswith('steamturbine') or t.lower().startswith('fuelcell')]
+        electric_techs_bau = [t for t in reopt_techs_bau if t.startswith("PV") or t.startswith("WIND") or t.startswith("GENERATOR") or t.startswith("CHP") or t.lower().startswith('steamturbine') or t.lower().startswith('fuelcell')]
 
         time_steps_with_grid, time_steps_without_grid = self._get_time_steps_with_grid()
 
@@ -1554,6 +1557,10 @@ class DataManager:
             hot_tes_can_supply_mp = 1
         hot_tes_can_supply_mp_bau = 0
 
+        # FuelCell parameters
+        hydrogen_slope_kg_per_kwh = self.hydrogen_slope_kg_per_kwh
+
+
         self.reopt_inputs = {
             'Tech': reopt_techs,
             'TechToLocation': tech_to_location,
@@ -1709,7 +1716,10 @@ class DataManager:
             "MassProducerConsumptionRatios": massproducer_consumption_ratios,
             "MassProducerMassValue": massproducer_mass_value_us_dollars_per_kwh,
             "MassProducerFeedstockCost": massproducer_feedstock_cost_us_dollars_per_kwh,
-            "HotTESCanSupplyMassProducer": hot_tes_can_supply_mp
+            "HotTESCanSupplyMassProducer": hot_tes_can_supply_mp,
+            #FUELCELL
+            "HydrogenSlope": hydrogen_slope_kg_per_kwh
+
             }
         ## Uncomment the following for debugging
         # import json
@@ -1876,5 +1886,7 @@ class DataManager:
             "MassProducerConsumptionRatios": massproducer_consumption_ratios,
             "MassProducerMassValue": massproducer_mass_value_us_dollars_per_kwh,
             "MassProducerFeedstockCost": massproducer_feedstock_cost_us_dollars_per_kwh,
-            "HotTESCanSupplyMassProducer": hot_tes_can_supply_mp_bau
+            "HotTESCanSupplyMassProducer": hot_tes_can_supply_mp_bau,
+            # FUELCELL
+            "HydrogenSlope": hydrogen_slope_kg_per_kwh
         }

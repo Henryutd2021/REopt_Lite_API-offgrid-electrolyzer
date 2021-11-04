@@ -45,7 +45,7 @@ from reo.src.load_profile_chiller_thermal import LoadProfileChillerThermal
 from reo.src.profiler import Profiler
 from reo.src.site import Site
 from reo.src.storage import Storage, HotTES, ColdTES, Tank
-from reo.src.techs import PV, Util, Wind, Generator, CHP, Boiler, ElectricChiller, AbsorptionChiller, NewBoiler, SteamTurbine, MassProducer
+from reo.src.techs import PV, Util, Wind, Generator, CHP, Boiler, ElectricChiller, AbsorptionChiller, NewBoiler, SteamTurbine, MassProducer, FuelCell
 from reo.src import ghp
 from celery import shared_task, Task
 from reo.models import ModelManager
@@ -441,6 +441,14 @@ def setup_scenario(self, run_uuid, data, raw_post):
             # Assign tmp["param"] = massproducer.xyx
             ModelManager.updateModel('MassProducerModel', tmp, run_uuid)
 
+        if inputs_dict["Site"]["FuelCell"]["max_kw"] > 0:
+            fuelcell = FuelCell(dfm=dfm, **inputs_dict['Site']['FuelCell'])
+            # Any parameters processed and updated?
+            tmp = dict()
+            # Assign tmp["param"] = fuelcell.xyx
+            ModelManager.updateModel('FuelCellModel', tmp, run_uuid)
+
+
         dfm.add_soc_incentive = inputs_dict['add_soc_incentive']
 
         dfm.finalize()
@@ -450,7 +458,7 @@ def setup_scenario(self, run_uuid, data, raw_post):
 
         for k in ['storage', 'hot_tes', 'cold_tes', 'tank', 'site', 'elec_tariff', 'fuel_tariff', 'pvs', 'pvnms',
                 'load', 'util', 'heating_load', 'cooling_load', 'newboiler', 'steamturbine', 'ghp_option_list',
-                'heating_load_space_heating', 'heating_load_dhw', 'massproducer'] + dfm.available_techs:
+                'heating_load_space_heating', 'heating_load_dhw', 'massproducer', 'FuelCell'] + dfm.available_techs:
             if dfm_dict.get(k) is not None:
                 del dfm_dict[k]
 
