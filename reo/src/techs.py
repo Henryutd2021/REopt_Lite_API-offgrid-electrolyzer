@@ -689,6 +689,7 @@ class NewBoiler(Tech):
 
         return newboiler_prod_factor
 
+
 class SteamTurbine(Tech):
 
     # Default data, created from input_files.CHP.steam_turbine_Default_data.json
@@ -807,6 +808,7 @@ class SteamTurbine(Tech):
 
         return steam_turbine_defaults
 
+
 class MassProducer(Tech):
 
     def __init__(self, dfm, **kwargs):
@@ -885,3 +887,34 @@ class MassProducer(Tech):
             convert_time_to_hr_factor = 1.0
 
         return convert_mass_to_kwh_factor, convert_time_to_hr_factor
+
+
+class FuelCell(Tech):
+
+    def __init__(self, dfm, min_kw, max_kw, hydrogen_slope_kg_per_kwh, hydrogen_intercept_kg_per_hr,
+                 min_turn_down_pct, time_steps_per_hour=1, **kwargs):
+        super(FuelCell, self).__init__(min_kw=min_kw, max_kw=max_kw, **kwargs)
+        """
+        Fuel Cell tech
+        """
+        self.fuel_slope = hydrogen_slope_kg_per_kwh
+        self.fuel_intercept = hydrogen_intercept_kg_per_hr
+        self.min_turn_down_pct = min_turn_down_pct
+        self.reopt_class = 'HYDROGEN'
+        self.time_steps_per_hour = time_steps_per_hour
+        self.om_cost_us_dollars_per_kwh = kwargs['om_cost_us_dollars_per_kwh']
+        self.derate = 0.0
+        self.incentives = Incentives(**kwargs)
+        if max_kw < min_kw:
+            min_kw = max_kw
+        self.min_kw = min_kw
+        self.max_kw = max_kw
+        self.useful_life_years = kwargs['useful_life_years']
+
+        dfm.add_fuelcell(self)
+
+    @property
+    def prod_factor(self):
+        fc_prod_factor = [1.0 for _ in range(8760 * self.time_steps_per_hour)]
+
+        return fc_prod_factor
