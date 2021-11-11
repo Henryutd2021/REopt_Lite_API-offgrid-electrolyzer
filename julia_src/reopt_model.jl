@@ -70,6 +70,9 @@ function add_continuous_variables(m, p)
         dvThermalToMassProducer[p.HeatingTechs, p.TimeStep] >= 0
         dvGridToMassProducer[p.TimeStep] >= 0
         dvStorageToMassProducer[p.Storage, p.TimeStep] >= 0
+        # Tank and FuelCell
+        dvMassProduction[p.MassProducerTechs, p.TimeStep] >= 0
+        dvHydrogentofuelcell[p.FuelCell, p.TimeStep] >= 0
     end
 	if !isempty(p.ExportTiers)
 		@variable(m, dvProductionToGrid[p.Tech, p.ExportTiers, p.TimeStep] >= 0)  # X^{ptg}_{tuh}: Exports from electrical production to the grid by technology t in demand tier u during time step h [kW]   (NEW)
@@ -539,6 +542,9 @@ function add_mass_producer_constraints(m, p)
             for b in p.HotTES
                 fix(m[:dvStorageToMassProducer][b,ts], 0.0, force=true)
             end
+            for t in p.MassProducerTechs
+                fix(m[:dvMassProduction][t,ts], 0.0, force=true)
+            end
         end
     else
         # Force thermal production to mass producer to zero if not applicable
@@ -575,6 +581,11 @@ function add_mass_producer_constraints(m, p)
                     sum(m[:dvRatedProduction][t,ts] * p.ProductionFactor[t,ts] * p.MassProducerConsumptionRatios["Thermal"]
                         for t in p.MassProducerTechs)
 					)
+		# Massproducer production
+	    @constraint(m, MassProduction[t in p.MassProducerTechs, ts in p.TimeStep],
+	                m[:dvMassProduction][t, ts] == p.TimeStepScaling *
+	                m[:dvRatedProduction][t,ts] * p.ProductionFactor[t,ts]
+	                )
 	end
 end
 
@@ -675,6 +686,16 @@ function add_storage_op_constraints(m, p)
 					p.StorageDecayRate[b] * m[:dvStorageCapEnergy][b]
 					)
 				)
+
+    @constraint(m, TankInventoryCon[b in p.Tank, ts in p.TimeStep],
+    	        m[:dvStorageSOC][b,ts] == m[:dvStorageSOC][b,ts-1] + p.TimeStepScaling * (sum(m[:dvMassProduction][t, ts]
+    	        for t in p.MassProducerTechs)  - sum([:dvHydrogentofuelcell][k, ts] for k in p.FuelCell))
+				)
+
+	@constraint(m, FuelBurnCon[b in p.FuelCell, ts in p.TimeStep],
+			m[:dvHydrogentofuelcell][b, ts] == p.TimeStepScaling * (
+				p.HydrogenSlope[b] * p.ProductionFactor[b,ts] * m[:dvRatedProduction][b,ts])
+				# TODO intercept part
 
 	# Constraint (4k): Minimum state of charge
 	@constraint(m, MinStorageLevelCon[b in p.Storage, ts in p.TimeStep],

@@ -266,6 +266,11 @@ Base.@kwdef struct Parameter
     MassProducerMassValue::Float64
     MassProducerFeedstockCost::Float64
     HotTESCanSupplyMassProducer::Int64
+    # Tank
+    Tank::Array{String,1}
+    # FuelCell
+    FuelCell::Array{String,1}
+    HydrogenSlope::Float64
 end
 
 
