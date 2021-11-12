@@ -694,7 +694,7 @@ function add_storage_op_constraints(m, p)
 
 	@constraint(m, FuelBurnCon[b in p.FuelCell, ts in p.TimeStep],
 			m[:dvHydrogentofuelcell][b, ts] == p.TimeStepScaling * (
-				p.HydrogenSlope[b] * p.ProductionFactor[b,ts] * m[:dvRatedProduction][b,ts])
+				p.HydrogenSlope[b] * p.ProductionFactor[b,ts] * m[:dvRatedProduction][b,ts]))
 				# TODO intercept part
 
 	# Constraint (4k): Minimum state of charge
@@ -1539,6 +1539,16 @@ function reopt_results(m, p, r::Dict)
 	else
 		add_null_massproducer_results(m, p, r)
 	end
+	if !isempty(p.FuelCell)
+		add_fuelcell_results(m, p, r)
+	else
+		add_null_fuelcell_results(m, p, r)
+	end
+	if !isempty(p.Tank)
+		add_tank_results(m, p, r)
+	else
+		add_null_tank_results(m, p, r)
+	end
 	add_util_results(m, p, r)
 
 	if p.OffGridFlag
@@ -1762,6 +1772,20 @@ function add_null_massproducer_results(m, p, r::Dict)
 	r["massproducer_year_one_feedstock_cost"] = 0.0
 	r["massproducer_total_mass_value"] = 0.0
     r["massproducer_total_feedstock_cost"] = 0.0
+	nothing
+end
+
+function add_null_fuelcell_results(m, p, r::Dict)
+	r["fuelcell_size_kw"] = 0.0
+	r["massproducer_energy_production_series_kwh"] = []
+    r["year_one_variable_om_cost_us_dollars"] = 0
+	r["hydrogen_used_series_kg"] = []
+	nothing
+end
+
+function add_null_tank_results(m, p, r::Dict)
+	r["tank_size_kg"] = 0.0
+	r["year_one_tank_soc_series"] = []
 	nothing
 end
 
@@ -2238,6 +2262,28 @@ function add_massproducer_results(m, p, r::Dict)
     r["massproducer_total_mass_value"] = round(value(m[:MassProductionValue] * m[:r_tax_fraction_owner]), digits=3)
     r["massproducer_total_feedstock_cost"] = round(value(m[:MassProducerFeedstockCost] * m[:r_tax_fraction_owner]), digits=3)
 	nothing
+end
+
+function add_fuelcell_results(m, p, r::Dict)
+	r["fuelcell_size_kw"] = round(value(sum(m[:dvSize][t] for t in p.FuelCell)), digits=3)
+	@expression(m, FuelCelltoLoad[ts in p.TimeStep],
+				sum(m[:dvRatedProduction][t, ts] * p.ProductionFactor[t, ts] * p.LevelizationFactor[t]
+					for t in p.FuelCell))
+	r["average_yearly_energy_produced_kwh"] = round.(value.(FuelCelltoLoad), digits=3)
+	r["hydrogen_used_series_kg"] = value.(m[:dvHydrogentofuelcell][b, ts] for b in p.FuelCell, ts in p.TimeStep)
+	m[:FuelCellPerUnitProdOMCosts] = @expression(m, p.two_party_factor *
+		sum(m[:dvRatedProduction][t,ts] * p.TimeStepScaling * p.ProductionFactor[t,ts] * p.OMcostPerUnitProd[t] * p.pwf_om
+			for t in p.FuelCell, ts in p.TimeStep))
+	r["year_one_variable_om_cost_us_dollars"] = round(value(m[:FuelCellPerUnitProdOMCosts][b, ts]
+	                                            / (p.pwf_om * p.two_party_factor), digits=0))
+    nothing
+end
+
+function add_tank_results(m, p, r::Dict)
+	r["tank_size_kg"] = round(value(sum(m[:dvStorageSOC][t] for t in p.Tank)), digits=3)
+	@expression(m, Tanksoc[ts in p.TimeStep], sum(m[:dvStorageSOC][b,ts] for b in p.Tank))
+	r["year_one_tank_soc_series"] = round.(value.(Tanksoc), digits=3)
+    nothing
 end
 
 function add_util_results(m, p, r::Dict)

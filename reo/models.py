@@ -1150,10 +1150,8 @@ class TankModel(models.Model):
 
     # Outputs
     size_kg = models.FloatField(null=True, blank=True)
-    year_one_hydrogen_soc_series = ArrayField(
+    year_one_tank_soc_series = ArrayField(
             models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
-    year_one_hydrogen_to_fuel_cell_series_kg_per_hr = ArrayField(
-            models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
 
     @classmethod
     def create(cls, **kwargs):
@@ -1197,11 +1195,9 @@ class FuelCellModel(models.Model):
     useful_life_years = models.FloatField(null=True, blank=True)
 
     # Outputs
-    hydrogen_used_kg = models.FloatField(null=True, blank=True)
     size_kw = models.FloatField(null=True, blank=True)
     average_yearly_energy_produced_kwh = models.FloatField(null=True, blank=True)
     year_one_variable_om_cost_us_dollars = models.FloatField(null=True, blank=True)
-    total_variable_om_cost_us_dollars = models.FloatField(null=True, blank=True)
     hydrogen_used_series_kg = ArrayField(
             models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
 

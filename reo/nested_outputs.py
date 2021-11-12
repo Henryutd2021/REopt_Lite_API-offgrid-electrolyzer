@@ -1401,14 +1401,9 @@ nested_output_definitions = {
                   "description": "Optimal hydrogen tank capacity",
                   "units": "kg"
                 },
-                "year_one_hydrogen_soc_series": {
+                "year_one_tank_soc_series": {
                   "type": list_of_float,
                   "description": "Year one hourly time series of hydrogen state of charge",
-                  "units": "kg/hr"
-                },
-                "year_one_hydrogen_to_fuel_cell_series_kg_per_hr": {
-                  "type": "list_of_float",
-                  "description": "Year one hourly time series of tank serving Fuelcell consumption",
                   "units": "kg/hr"
                 },
               },
@@ -1418,20 +1413,10 @@ nested_output_definitions = {
                   "description": "Optimal fuel cell system size",
                   "units": "kW"
                 },
-                "hydrogen_used_kg": {
-                  "type": "float",
-                  "description": "hydrogen used.",
-                  "units": "Kg"
-                },
                 "average_yearly_energy_produced_kwh": {
                   "type": "float",
                   "description": "Average annual energy produced by the fuel cell over one year",
                   "units": "kWh"
-                },
-                "total_variable_om_cost_us_dollars": {
-                  "type": "float",
-                  "description": "Total lifecycle variable (based on kWh produced) O&M cost for existing + recommended diesel generator system",
-                  "units": "$"
                 },
                 "year_one_variable_om_cost_us_dollars": {
                   "type": "float",

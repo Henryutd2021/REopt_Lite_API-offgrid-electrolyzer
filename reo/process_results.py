@@ -990,6 +990,19 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
                     self.nested_outputs["Scenario"]["Site"][name][
                         "total_feedstock_cost"] = self.results_dict.get("massproducer_total_feedstock_cost")
 
+                elif name == "FuelCell":
+                    self.nested_outputs["Scenario"]["Site"][name]["size_kw"] = self.results_dict.get("fuelcell_size_kw", 0)
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "average_yearly_energy_produced_kwh"] = self.results_dict.get("average_yearly_energy_produced_kwh")
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "hydrogen_used_series_kg"] = self.results_dict.get("hydrogen_used_series_kg")
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "year_one_variable_om_cost_us_dollars"] = self.results_dict.get("year_one_variable_om_cost_us_dollars", 0)
+
+                elif name == "Tank":
+                    self.nested_outputs["Scenario"]["Site"][name]["size_kg"] = self.results_dict.get("tank_size_kg", 0)
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "year_one_tank_soc_series"] = self.results_dict.get("year_one_tank_soc_series")
 
             # outputs that depend on multiple object results:
             future_replacement_cost, present_replacement_cost = self.replacement_costs_future_and_present
