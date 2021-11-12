@@ -692,7 +692,7 @@ function add_storage_op_constraints(m, p)
     	        for t in p.MassProducerTechs)  - sum([:dvHydrogentofuelcell][k, ts] for k in p.FuelCell))
 				)
 
-	@constraint(m, FuelBurnCon[b in p.FuelCell, ts in p.TimeStep],
+	@constraint(m, HydrogenBurnCon[b in p.FuelCell, ts in p.TimeStep],
 			m[:dvHydrogentofuelcell][b, ts] == p.TimeStepScaling * (
 				p.HydrogenSlope[b] * p.ProductionFactor[b,ts] * m[:dvRatedProduction][b,ts]))
 				# TODO intercept part
