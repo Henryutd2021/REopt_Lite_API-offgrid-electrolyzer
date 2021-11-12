@@ -2271,11 +2271,10 @@ function add_fuelcell_results(m, p, r::Dict)
 					for t in p.FuelCell))
 	r["average_yearly_energy_produced_kwh"] = round.(value.(FuelCelltoLoad), digits=3)
 	r["hydrogen_used_series_kg"] = value.(m[:dvHydrogentofuelcell][b, ts] for b in p.FuelCell, ts in p.TimeStep)
-	m[:FuelCellPerUnitProdOMCosts] = @expression(m, p.two_party_factor *
+	@expression(m, FuelCellPerUnitProdOMCosts, p.two_party_factor *
 		sum(m[:dvRatedProduction][t,ts] * p.TimeStepScaling * p.ProductionFactor[t,ts] * p.OMcostPerUnitProd[t] * p.pwf_om
 			for t in p.FuelCell, ts in p.TimeStep))
-	r["year_one_variable_om_cost_us_dollars"] = round(value(m[:FuelCellPerUnitProdOMCosts][b, ts]
-	                                            / (p.pwf_om * p.two_party_factor), digits=0))
+	r["year_one_variable_om_cost_us_dollars"] = round(value(FuelCellPerUnitProdOMCosts / (p.pwf_om * p.two_party_factor)), digits=0)
     nothing
 end
 
