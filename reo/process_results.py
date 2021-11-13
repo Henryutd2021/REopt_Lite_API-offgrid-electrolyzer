@@ -993,11 +993,13 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
                 elif name == "FuelCell":
                     self.nested_outputs["Scenario"]["Site"][name]["size_kw"] = self.results_dict.get("fuelcell_size_kw", 0)
                     self.nested_outputs["Scenario"]["Site"][name][
-                        "average_yearly_energy_produced_kwh"] = self.results_dict.get("average_yearly_energy_produced_kwh")
+                        "average_yearly_energy_produced_kwh"] = self.results_dict.get("average_yearly_energy_produced_kwh", 0)
                     self.nested_outputs["Scenario"]["Site"][name][
                         "hydrogen_used_series_kg"] = self.results_dict.get("hydrogen_used_series_kg")
                     self.nested_outputs["Scenario"]["Site"][name][
                         "year_one_variable_om_cost_us_dollars"] = self.results_dict.get("year_one_variable_om_cost_us_dollars", 0)
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "year_one_power_production_series_kw"] = self.results_dict.get("year_one_power_production_series_kw")
 
                 elif name == "Tank":
                     self.nested_outputs["Scenario"]["Site"][name]["size_kg"] = self.results_dict.get("tank_size_kg", 0)
