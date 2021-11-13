@@ -897,19 +897,19 @@ class FuelCell(Tech):
         """
         Fuel Cell tech
         """
-        self.fuel_slope = hydrogen_slope_kg_per_kwh
-        self.fuel_intercept = hydrogen_intercept_kg_per_hr
-        self.min_turn_down_pct = min_turn_down_pct
+        self.hydrogen_slope = kwargs.get('hydrogen_slope_kg_per_kwh')
+        self.hydrogen_intercept = kwargs.get('hydrogen_intercept_kg_per_hr')
+        self.min_turn_down_pct = kwargs.get('min_turn_down_pct')
         self.reopt_class = 'HYDROGEN'
         self.time_steps_per_hour = time_steps_per_hour
-        self.om_cost_us_dollars_per_kwh = kwargs['om_cost_us_dollars_per_kwh']
+        self.om_cost_us_dollars_per_kwh = kwargs.get('om_cost_us_dollars_per_kwh')
         self.derate = 0.0
         self.incentives = Incentives(**kwargs)
-        if max_kw < min_kw:
-            min_kw = max_kw
-        self.min_kw = min_kw
-        self.max_kw = max_kw
-        self.useful_life_years = kwargs['useful_life_years']
+        # if max_kw < min_kw:
+        #     min_kw = max_kw
+        self.min_kw = kwargs['min_kw']
+        self.max_kw = kwargs['max_kw']
+        self.useful_life_years = kwargs.get('useful_life_years')
 
         dfm.add_fuelcell(self)
 

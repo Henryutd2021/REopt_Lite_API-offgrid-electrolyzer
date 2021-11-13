@@ -86,6 +86,7 @@ class DataManager:
         self.off_grid_flag = None
         self.massproducer = None
         self.tank = None
+        self.fuelcell = None
 
         # following attributes used to pass data to process_results.py
         # If we serialize the python classes then we could pass the objects between Celery tasks
