@@ -193,9 +193,9 @@ class Tank(object):
 
         self.min_kwh = self.min_kg
         self.max_kwh = self.max_kg
+        # TODO covert the kwh to kg.
         self.installed_cost_us_dollars_per_kg = self.installed_cost_us_dollars_per_kg
         self.om_cost_us_dollars_per_kg = self.om_cost_us_dollars_per_kg
-        self.can_supply_fc = kwargs.get("can_supply_fc")
 
         # TODO self.incentives = TESIncentives(self.macrs_option_years, self.macrs_bonus_pct)
 
