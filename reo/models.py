@@ -1142,11 +1142,10 @@ class TankModel(models.Model):
     run_uuid = models.UUIDField(unique=True)
     min_kg = models.FloatField(null=True, blank=True)
     max_kg = models.FloatField(null=True, blank=True)
-    installed_cost_us_dollars_per_gal = models.FloatField(null=True, blank=True)
-    om_cost_us_dollars_per_gal = models.FloatField(null=True, blank=True)
+    installed_cost_us_dollars_per_kg = models.FloatField(null=True, blank=True)
+    om_cost_us_dollars_per_kg = models.FloatField(null=True, blank=True)
     macrs_option_years = models.IntegerField(null=True, blank=True)
     macrs_bonus_pct = models.FloatField(null=True, blank=True)
-    can_supply_fc = models.BooleanField(null=True, blank=True)
 
     # Outputs
     size_kg = models.FloatField(null=True, blank=True)
@@ -1200,6 +1199,8 @@ class FuelCellModel(models.Model):
     year_one_variable_om_cost_us_dollars = models.FloatField(null=True, blank=True)
     hydrogen_used_series_kg = ArrayField(
             models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
+    year_one_power_production_series_kw = ArrayField(
+        models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
 
     @classmethod
     def create(cls, **kwargs):
