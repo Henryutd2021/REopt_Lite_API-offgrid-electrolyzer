@@ -1409,22 +1409,27 @@ nested_output_definitions = {
               },
               "FuelCell": {
                 "size_kw": {
-                  "type": "float",
+                  "type": float,
                   "description": "Optimal fuel cell system size",
                   "units": "kW"
                 },
                 "average_yearly_energy_produced_kwh": {
-                  "type": "float",
+                  "type": float,
                   "description": "Average annual energy produced by the fuel cell over one year",
                   "units": "kWh"
                 },
                 "year_one_variable_om_cost_us_dollars": {
-                  "type": "float",
+                  "type": float,
+                  "description": "Year one variable (based on kwh produced) O&M cost for existing + recommended diesel generator system",
+                  "units": "$"
+                },
+                  "year_one_power_production_series_kw": {
+                  "type": list_of_float,
                   "description": "Year one variable (based on kwh produced) O&M cost for existing + recommended diesel generator system",
                   "units": "$"
                 },
                 "hydrogen_used_series_kg": {
-                  "type": "list_of_float",
+                  "type": list_of_float,
                   "description": "Temp variable for hydrogen usage at each hour",
                   "units": "kg"
                 },
