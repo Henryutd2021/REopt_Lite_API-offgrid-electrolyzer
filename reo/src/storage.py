@@ -191,12 +191,11 @@ class Tank(object):
         for key, value in kwargs.items():
             setattr(self, key, value)
 
-        self.min_kwh = self.min_kg
-        self.max_kwh = self.max_kg
-        # TODO covert the kwh to kg.
-        self.installed_cost_us_dollars_per_kg = self.installed_cost_us_dollars_per_kg
-        self.om_cost_us_dollars_per_kg = self.om_cost_us_dollars_per_kg
-
-        # TODO self.incentives = TESIncentives(self.macrs_option_years, self.macrs_bonus_pct)
+        # self.min_kwh = self.min_kg
+        # self.max_kwh = self.max_kg
+        # # TODO covert the kwh to kg.
+        # self.installed_cost_us_dollars_per_kg = self.installed_cost_us_dollars_per_kg
+        # self.om_cost_us_dollars_per_kg = self.om_cost_us_dollars_per_kg
+        # self.incentives = TESIncentives(self.macrs_option_years, self.macrs_bonus_pct)
 
         dfm.add_tank(self)
