@@ -458,7 +458,7 @@ def setup_scenario(self, run_uuid, data, raw_post):
 
         for k in ['storage', 'hot_tes', 'cold_tes', 'tank', 'site', 'elec_tariff', 'fuel_tariff', 'pvs', 'pvnms',
                 'load', 'util', 'heating_load', 'cooling_load', 'newboiler', 'steamturbine', 'ghp_option_list',
-                'heating_load_space_heating', 'heating_load_dhw', 'massproducer', 'FuelCell'] + dfm.available_techs:
+                'heating_load_space_heating', 'heating_load_dhw', 'massproducer', 'fuelcell'] + dfm.available_techs:
             if dfm_dict.get(k) is not None:
                 del dfm_dict[k]
 
