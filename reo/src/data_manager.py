@@ -1559,7 +1559,7 @@ class DataManager:
         hot_tes_can_supply_mp_bau = 0
 
         # FuelCell parameters
-        hydrogen_slope_kg_per_kwh = self.hydrogen_slope_kg_per_kwh
+        hydrogen_slope_kg_per_kwh = self.hydrogen_slope
 
 
         self.reopt_inputs = {
