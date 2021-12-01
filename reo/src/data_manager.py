@@ -1559,7 +1559,7 @@ class DataManager:
         hot_tes_can_supply_mp_bau = 0
 
         # FuelCell parameters
-        hydrogen_slope_kg_per_kwh = self.hydrogen_slope
+        hydrogen_kg_per_kwh = self.hydrogen_slope
 
 
         self.reopt_inputs = {
@@ -1719,7 +1719,7 @@ class DataManager:
             "MassProducerFeedstockCost": massproducer_feedstock_cost_us_dollars_per_kwh,
             "HotTESCanSupplyMassProducer": hot_tes_can_supply_mp,
             #FUELCELL
-            "HydrogenSlope": hydrogen_slope_kg_per_kwh
+            "HydrogenSlope": hydrogen_kg_per_kwh
 
             }
         ## Uncomment the following for debugging
@@ -1889,5 +1889,5 @@ class DataManager:
             "MassProducerFeedstockCost": massproducer_feedstock_cost_us_dollars_per_kwh,
             "HotTESCanSupplyMassProducer": hot_tes_can_supply_mp_bau,
             # FUELCELL
-            "HydrogenSlope": hydrogen_slope_kg_per_kwh
+            "HydrogenSlope": hydrogen_kg_per_kwh
         }
