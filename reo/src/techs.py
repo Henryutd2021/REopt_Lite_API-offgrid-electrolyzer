@@ -891,9 +891,8 @@ class MassProducer(Tech):
 
 class FuelCell(Tech):
 
-    def __init__(self, dfm, min_kw, max_kw, hydrogen_slope_kg_per_kwh, hydrogen_intercept_kg_per_hr,
-                 min_turn_down_pct, time_steps_per_hour=1, **kwargs):
-        super(FuelCell, self).__init__(min_kw=min_kw, max_kw=max_kw, **kwargs)
+    def __init__(self, dfm, time_steps_per_hour=1, **kwargs):
+        super(FuelCell, self).__init__(**kwargs)
         """
         Fuel Cell tech
         """
