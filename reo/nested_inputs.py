@@ -2588,7 +2588,7 @@ nested_input_definitions = {
           "default": 0.00,
           "description": "fuel cell per unit production (variable) operations and maintenance costs in $/kWh"
         },
-        "Hydrogen_slope_kg_per_kwh": {
+        "hydrogen_slope_kg_per_kwh": {
           "type": "float",
           "min": 0.0,
           "max": 10,
