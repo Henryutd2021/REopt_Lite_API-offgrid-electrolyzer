@@ -196,6 +196,6 @@ class Tank(object):
         # # TODO covert the kwh to kg.
         # self.installed_cost_us_dollars_per_kg = self.installed_cost_us_dollars_per_kg
         # self.om_cost_us_dollars_per_kg = self.om_cost_us_dollars_per_kg
-        # self.incentives = TESIncentives(self.macrs_option_years, self.macrs_bonus_pct)
+        self.incentives = TESIncentives(self.macrs_option_years, self.macrs_bonus_pct)
 
         dfm.add_tank(self)
