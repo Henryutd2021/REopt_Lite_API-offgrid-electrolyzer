@@ -817,6 +817,7 @@ class DataManager:
                                                  self.storage.internal_efficiency_pct**0.5)
                 charge_efficiency.append(self.hot_tes.internal_efficiency_pct)
                 charge_efficiency.append(self.cold_tes.internal_efficiency_pct)
+                charge_efficiency.append(1)
                 # Yearly fixed O&M per unit power
                 if tech.lower() in ['boiler', 'elecchl']:
                     om_cost_us_dollars_per_kw.append(0)
