@@ -848,6 +848,7 @@ class DataManager:
         # Current TES efficiency input is just charging/in efficiency, so eta_tes_out is 1.
         discharge_efficiency.append(1.0)
         discharge_efficiency.append(1.0)
+        discharge_efficiency.append(1.0)
 
         # In BAU case, storage.dat must be filled out for REopt initializations, but max size is set to zero
 
