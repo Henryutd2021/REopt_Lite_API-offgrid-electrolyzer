@@ -1153,6 +1153,7 @@ class DataManager:
             storage_max_power.append(self.tank.max_kg / self.steplength)
             storage_min_energy.append(self.tank.min_kg)
             storage_max_energy.append(self.tank.max_kg)
+            storage_decay_rate.append(0.0)
             # TODO storage_decay_rate.append(self.cold_tes.thermal_decay_rate_fraction)
 
         thermal_storage_techs = storage_techs[1:]
