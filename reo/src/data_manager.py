@@ -306,7 +306,7 @@ class DataManager:
 
             if eval('self.' + tech) is not None:
 
-                if tech not in ['generator', 'boiler', 'elecchl', 'absorpchl', 'newboiler', 'steamturbine', 'massproducer']:
+                if tech not in ['generator', 'boiler', 'elecchl', 'absorpchl', 'newboiler', 'steamturbine', 'massproducer', 'tank']:
 
                     # prod incentives don't need escalation
                     if tech.startswith("pv"):  # PV has degradation
@@ -1143,7 +1143,7 @@ class DataManager:
                                                         self.tank.incentives.macrs_schedule,
                                                         self.tank.incentives.macrs_bonus_pct,
                                                         0)
-            storage_techs.append('tank')
+            storage_techs.append('Tank')
             storage_power_cost.append(0.0)
             storage_energy_cost.append(TankCostPerKg)
             #Note: power not sized in REopt; assume full charge or discharge in one timestep.
