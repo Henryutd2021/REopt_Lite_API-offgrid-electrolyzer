@@ -269,8 +269,8 @@ Base.@kwdef struct Parameter
     # Tank
     Tank::Array{String,1}
     # FuelCell
-    FuelCell::Array{String,1}
-    HydrogenSlope::Float64
+    HydrogenUsingTechs::Array{String,1}
+    HydrogenSlope::AxisArray
 end
 
 
@@ -417,6 +417,8 @@ function Parameter(d::Dict)
     d["GHPHeatingThermalServed"] = array_of_array_to_2D_array(d["GHPHeatingThermalServed"])
     d["GHPCoolingThermalServed"] = array_of_array_to_2D_array(d["GHPCoolingThermalServed"])
     d["GHPElectricConsumed"] = array_of_array_to_2D_array(d["GHPElectricConsumed"])
+
+	d["HydrogenSlope"] = AxisArray(d["HydrogenSlope"], d["HydrogenUsingTechs"])
 
     d = string_dictkeys_tosymbols(d)
     d = filter_dict_to_match_struct_field_names(d, Parameter)

@@ -72,7 +72,7 @@ function add_continuous_variables(m, p)
         dvStorageToMassProducer[p.Storage, p.TimeStep] >= 0
         # Tank and FuelCell
         dvMassProduction[p.MassProducerTechs, p.TimeStep] >= 0
-        dvHydrogentofuelcell[p.FuelCell, p.TimeStep] >= 0
+        dvHydrogentofuelcell[p.HydrogenUsingTechs, p.TimeStep] >= 0
     end
 	if !isempty(p.ExportTiers)
 		@variable(m, dvProductionToGrid[p.Tech, p.ExportTiers, p.TimeStep] >= 0)  # X^{ptg}_{tuh}: Exports from electrical production to the grid by technology t in demand tier u during time step h [kW]   (NEW)
@@ -689,10 +689,10 @@ function add_storage_op_constraints(m, p)
 
     @constraint(m, TankInventoryCon[b in p.Tank, ts in p.TimeStep],
     	        m[:dvStorageSOC][b,ts] == m[:dvStorageSOC][b,ts-1] + p.TimeStepScaling * (sum(m[:dvMassProduction][t, ts]
-    	        for t in p.MassProducerTechs)  - sum([:dvHydrogentofuelcell][k, ts] for k in p.FuelCell))
+    	        for t in p.MassProducerTechs)  - sum([:dvHydrogentofuelcell][k, ts] for k in p.HdydrogenUsingTechs))
 				)
 
-	@constraint(m, HydrogenBurnCon[b in p.FuelCell, ts in p.TimeStep],
+	@constraint(m, HydrogenBurnCon[b in p.HdydrogenUsingTechs, ts in p.TimeStep],
 			m[:dvHydrogentofuelcell][b, ts] == p.TimeStepScaling * (
 				p.HydrogenSlope[b] * p.ProductionFactor[b,ts] * m[:dvRatedProduction][b,ts]))
 				# TODO intercept part
@@ -1539,7 +1539,7 @@ function reopt_results(m, p, r::Dict)
 	else
 		add_null_massproducer_results(m, p, r)
 	end
-	if !isempty(p.FuelCell)
+	if !isempty(p.HdydrogenUsingTechs)
 		add_fuelcell_results(m, p, r)
 	else
 		add_null_fuelcell_results(m, p, r)
@@ -2266,18 +2266,18 @@ function add_massproducer_results(m, p, r::Dict)
 end
 
 function add_fuelcell_results(m, p, r::Dict)
-	r["fuelcell_size_kw"] = round(value(sum(m[:dvSize][t] for t in p.FuelCell)), digits=3)
+	r["fuelcell_size_kw"] = round(value(sum(m[:dvSize][t] for t in p.HdydrogenUsingTechs)), digits=3)
 	@expression(m, FuelCelltoLoad[ts in p.TimeStep],
 				sum(m[:dvRatedProduction][t, ts] * p.ProductionFactor[t, ts] * p.LevelizationFactor[t]
-					for t in p.FuelCell))
+					for t in p.HdydrogenUsingTechs))
 	r["year_one_power_production_series_kw"] = round.(value.(FuelCelltoLoad), digits=3)
 	AverageFcProd = @expression(m, sum(m[:dvRatedProduction][t,ts] * p.ProductionFactor[t, ts] * p.LevelizationFactor[t]
-			    for t in Fuelcell, ts in p.TimeStep) * p.TimeStepScaling)
+			    for t in p.HdydrogenUsingTechs, ts in p.TimeStep) * p.TimeStepScaling)
 	r["average_yearly_energy_produced_kwh"] = round(value(AverageFcProd), digits=0)
-	r["hydrogen_used_series_kg"] = value.(m[:dvHydrogentofuelcell][b, ts] for b in p.FuelCell, ts in p.TimeStep)
+	r["hydrogen_used_series_kg"] = value.(m[:dvHydrogentofuelcell][b, ts] for b in p.HdydrogenUsingTechs, ts in p.TimeStep)
 	@expression(m, FuelCellPerUnitProdOMCosts, p.two_party_factor *
 		sum(m[:dvRatedProduction][t,ts] * p.TimeStepScaling * p.ProductionFactor[t,ts] * p.OMcostPerUnitProd[t] * p.pwf_om
-			for t in p.FuelCell, ts in p.TimeStep))
+			for t in p.HdydrogenUsingTechs, ts in p.TimeStep))
 	r["year_one_variable_om_cost_us_dollars"] = round(value(FuelCellPerUnitProdOMCosts / (p.pwf_om * p.two_party_factor)), digits=0)
     nothing
 end
