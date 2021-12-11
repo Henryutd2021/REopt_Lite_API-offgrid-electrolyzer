@@ -1563,8 +1563,8 @@ class DataManager:
         hot_tes_can_supply_mp_bau = 0
 
         # FuelCell parameters
-        hu_techs = [t for t in reopt_techs if t in self.fuel_burning_techs]
-        hu_techs_bau = [t for t in reopt_techs_bau if t in self.fuel_burning_techs]
+        hu_techs = [t for t in reopt_techs if t in self.hydrogen_using_techs]
+        hu_techs_bau = [t for t in reopt_techs_bau if t in self.hydrogen_using_techs]
 
 
 
