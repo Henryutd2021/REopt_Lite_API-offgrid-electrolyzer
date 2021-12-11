@@ -1565,7 +1565,7 @@ class DataManager:
         # FuelCell parameters
         hu_techs = [t for t in reopt_techs if t in self.fuel_burning_techs]
         hu_techs_bau = [t for t in reopt_techs_bau if t in self.fuel_burning_techs]
-        hydrogen_kg_per_kwh = self.fuelcell.hydrogen_slope
+
 
 
         self.reopt_inputs = {
@@ -1725,7 +1725,7 @@ class DataManager:
             "MassProducerFeedstockCost": massproducer_feedstock_cost_us_dollars_per_kwh,
             "HotTESCanSupplyMassProducer": hot_tes_can_supply_mp,
             #FUELCELL
-            "HydrogenSlope": hydrogen_kg_per_kwh,
+            "HydrogenSlope": [self.fuelcell.hydrogen_slope],
             'HydrogenUsingTechs': hu_techs,
 
             }
@@ -1896,7 +1896,7 @@ class DataManager:
             "MassProducerFeedstockCost": massproducer_feedstock_cost_us_dollars_per_kwh,
             "HotTESCanSupplyMassProducer": hot_tes_can_supply_mp_bau,
             # FUELCELL
-            "HydrogenSlope": hydrogen_kg_per_kwh,
+            "HydrogenSlope": [self.fuelcell.hydrogen_slope],
             'HydrogenUsingTechs': hu_techs_bau,
 
         }
