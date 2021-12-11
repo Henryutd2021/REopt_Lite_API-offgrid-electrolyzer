@@ -103,6 +103,7 @@ class DataManager:
         self.bau_techs = []
         self.NMILRegime = ['BelowNM', 'NMtoIL', 'AboveIL']
         self.fuel_burning_techs = ['GENERATOR', 'CHP']
+        self.hydrogen_using_techs = ['FUELCELL']
         self.ghp_uuid_list = []
 
         self.run_id = run_id
@@ -1562,8 +1563,8 @@ class DataManager:
         hot_tes_can_supply_mp_bau = 0
 
         # FuelCell parameters
-        fuelcell_techs = [t for t in reopt_techs if t.lower().startswith('fuelcell')]
-        fuelcell_techs_bau = [t for t in reopt_techs_bau if t.lower().startswith('fuelcell')]
+        hu_techs = [t for t in reopt_techs if t in self.fuel_burning_techs]
+        hu_techs_bau = [t for t in reopt_techs_bau if t in self.fuel_burning_techs]
         hydrogen_kg_per_kwh = self.fuelcell.hydrogen_slope
 
 
@@ -1725,7 +1726,7 @@ class DataManager:
             "HotTESCanSupplyMassProducer": hot_tes_can_supply_mp,
             #FUELCELL
             "HydrogenSlope": hydrogen_kg_per_kwh,
-            "Fuelcell":fuelcell_techs
+            'HydrogenUsingTechs': hu_techs,
 
             }
         ## Uncomment the following for debugging
@@ -1896,6 +1897,6 @@ class DataManager:
             "HotTESCanSupplyMassProducer": hot_tes_can_supply_mp_bau,
             # FUELCELL
             "HydrogenSlope": hydrogen_kg_per_kwh,
-            "Fuelcell":fuelcell_techs_bau
+            'HydrogenUsingTechs': hu_techs_bau,
 
         }
