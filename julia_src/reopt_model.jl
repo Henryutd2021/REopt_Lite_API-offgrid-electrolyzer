@@ -360,6 +360,10 @@ function add_bigM_adjustments(m, p)
     for t in p.MassProducerTechs  # This will overwrite any NewMaxSize assigned above if Techs are also ElectricTechs (e.g. CHP and SteamTurbine)
 		m[:NewMaxSize][t] = p.MaxSize[t]
 	end
+
+	for t in p.HydrogenUsingTechs
+		m[:NewMaxSize][t] = p.MaxSize[t]
+	end
 end
 
 
