@@ -307,7 +307,7 @@ class DataManager:
 
             if eval('self.' + tech) is not None:
 
-                if tech not in ['generator', 'boiler', 'elecchl', 'absorpchl', 'newboiler', 'steamturbine', 'massproducer']:
+                if tech not in ['generator', 'boiler', 'elecchl', 'absorpchl', 'newboiler', 'steamturbine', 'massproducer', 'fuelcell']:
 
                     # prod incentives don't need escalation
                     if tech.startswith("pv"):  # PV has degradation
