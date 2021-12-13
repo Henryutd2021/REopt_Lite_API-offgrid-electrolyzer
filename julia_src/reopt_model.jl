@@ -2287,7 +2287,7 @@ function add_fuelcell_results(m, p, r::Dict)
 end
 
 function add_tank_results(m, p, r::Dict)
-	r["tank_size_kg"] = round(value(sum(m[:dvStorageSOC][t] for t in p.Tank)), digits=3)
+	r["tank_size_kg"] = round(value(sum(m[:dvStorageCapEnergy][t] for t in p.Tank)), digits=3)
 	@expression(m, Tanksoc[ts in p.TimeStep], sum(m[:dvStorageSOC][b,ts] for b in p.Tank))
 	r["year_one_tank_soc_series"] = round.(value.(Tanksoc), digits=3)
     nothing
