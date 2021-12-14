@@ -1896,7 +1896,7 @@ class DataManager:
             "MassProducerFeedstockCost": massproducer_feedstock_cost_us_dollars_per_kwh,
             "HotTESCanSupplyMassProducer": hot_tes_can_supply_mp_bau,
             # FUELCELL
-            "HydrogenSlope": [self.fuelcell.hydrogen_slope],
+            "HydrogenSlope": [],
             'HydrogenUsingTechs': hu_techs_bau,
 
         }
