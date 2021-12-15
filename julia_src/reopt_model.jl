@@ -2278,7 +2278,8 @@ function add_fuelcell_results(m, p, r::Dict)
 	AverageFcProd = @expression(m, sum(m[:dvRatedProduction][t,ts] * p.ProductionFactor[t, ts] * p.LevelizationFactor[t]
 			    for t in p.HydrogenUsingTechs, ts in p.TimeStep) * p.TimeStepScaling)
 	r["average_yearly_energy_produced_kwh"] = round(value(AverageFcProd), digits=0)
-	r["hydrogen_used_series_kg"] = value.(m[:dvHydrogenToFuelcell][b, ts] for b in p.HydrogenUsingTechs, ts in p.TimeStep)
+	@expression(m, HydrogenUsedSeries[ts in p.TimeStep], sum(m[:dvHydrogenToFuelcell][b, ts] for b in p.HydrogenUsingTechs))
+	r["hydrogen_used_series_kg"] = round.(value.(HydrogenUsedSeries), digits=3)
 	@expression(m, FuelCellPerUnitProdOMCosts, p.two_party_factor *
 		sum(m[:dvRatedProduction][t,ts] * p.TimeStepScaling * p.ProductionFactor[t,ts] * p.OMcostPerUnitProd[t] * p.pwf_om
 			for t in p.HydrogenUsingTechs, ts in p.TimeStep))

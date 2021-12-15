@@ -1429,7 +1429,7 @@ nested_output_definitions = {
                   "units": "$"
                 },
                 "hydrogen_used_series_kg": {
-                  "type": 'list_of_float',
+                  "type": "list_of_float",
                   "description": "Temp variable for hydrogen usage at each hour",
                   "units": "kg"
                 },
