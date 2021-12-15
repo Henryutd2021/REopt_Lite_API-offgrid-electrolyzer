@@ -1423,7 +1423,7 @@ nested_output_definitions = {
                   "description": "Year one variable (based on kwh produced) O&M cost for existing + recommended diesel generator system",
                   "units": "$"
                 },
-                  "year_one_power_production_series_kw": {
+                  "year_one_power_production_series": {
                   "type": "list_of_float",
                   "description": "Year one variable (based on kwh produced) O&M cost for existing + recommended diesel generator system",
                   "units": "$"

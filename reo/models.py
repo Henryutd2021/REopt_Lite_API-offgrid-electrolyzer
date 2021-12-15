@@ -1199,7 +1199,7 @@ class FuelCellModel(models.Model):
     year_one_variable_om_cost_us_dollars = models.FloatField(null=True, blank=True)
     hydrogen_used_series_kg = ArrayField(
             models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
-    year_one_power_production_series_kw = ArrayField(
+    year_one_power_production_series = ArrayField(
         models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
 
     @classmethod
