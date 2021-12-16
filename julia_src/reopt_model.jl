@@ -175,7 +175,7 @@ function add_cost_expressions(m, p)
     # MassProducer mass production value and feedstock cost
     if !isempty(p.MassProducerTechs)
         m[:MassProductionValue] = @expression(m, p.two_party_factor * p.pwf_e * p.TimeStepScaling *
-            p.MassProducerMassValue * sum(m[:dvRatedProduction][t,ts] * p.ProductionFactor[t,ts] for t in p.MassProducerTechs, ts in p.TimeStep))
+            p.MassProducerMassValue * sum(sum(m[:dvRatedProduction][t,ts] * p.ProductionFactor[t,ts] for t in p.MassProducerTechs)- sum(m[:dvHydrogenToFuelcell][k, ts] for k in p.HydrogenUsingTechs) for ts in p.TimeStep))
         m[:MassProducerFeedstockCost] = @expression(m, p.two_party_factor * p.pwf_e * p.TimeStepScaling *
             p.MassProducerFeedstockCost * p.MassProducerConsumptionRatios["Feedstock"] *
             sum(m[:dvRatedProduction][t,ts] * p.ProductionFactor[t,ts] for t in p.MassProducerTechs, ts in p.TimeStep))
