@@ -1377,7 +1377,7 @@ class DataManager:
         techs_no_turndown_bau = [t for t in reopt_techs_bau if t.startswith("PV") or t.startswith("WIND")]
 
         electric_techs = [t for t in reopt_techs if t.startswith("PV") or t.startswith("WIND") or t.startswith("GENERATOR") or t.startswith("CHP") or t.lower().startswith('steamturbine') or t.lower().startswith('fuelcell')]
-        electric_techs_bau = [t for t in reopt_techs_bau if t.startswith("PV") or t.startswith("WIND") or t.startswith("GENERATOR") or t.startswith("CHP") or t.lower().startswith('steamturbine') or t.lower().startswith('fuelcell')]
+        electric_techs_bau = [t for t in reopt_techs_bau if t.startswith("PV") or t.startswith("WIND") or t.startswith("GENERATOR") or t.startswith("CHP") or t.lower().startswith('steamturbine')]
 
         time_steps_with_grid, time_steps_without_grid = self._get_time_steps_with_grid()
 
