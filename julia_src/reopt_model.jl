@@ -692,8 +692,8 @@ function add_storage_op_constraints(m, p)
 				)
 
     @constraint(m, TankInventoryCon[b in p.Tank, ts in p.TimeStep],
-    	        m[:dvStorageSOC][b,ts] == m[:dvStorageSOC][b,ts-1] + p.TimeStepScaling * (sum(m[:dvMassProduction][t, ts]
-    	        for t in p.MassProducerTechs)  - sum(m[:dvHydrogenToFuelcell][k, ts] for k in p.HydrogenUsingTechs))
+    	        m[:dvStorageSOC][b,ts] == m[:dvStorageSOC][b,ts-1] + sum(m[:dvMassProduction][t, ts]
+    	        for t in p.MassProducerTechs)  - sum(m[:dvHydrogenToFuelcell][k, ts] for k in p.HydrogenUsingTechs)
 				)
 
 	@constraint(m, HydrogenBurnCon[b in p.HydrogenUsingTechs, ts in p.TimeStep],
