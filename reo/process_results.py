@@ -978,8 +978,11 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
                         "year_one_electric_consumption_series_kw"] = self.results_dict.get("massproducer_electric_consumption_series_kw")
                     self.nested_outputs["Scenario"]["Site"][name][
                         "year_one_thermal_consumption_series_mmbtu_per_hr"] = [x / MMBTU_TO_KWH for x in self.results_dict.get("massproducer_thermal_consumption_series_kw")]
+                    # self.nested_outputs["Scenario"]["Site"][name][
+                    #     "year_one_mass_production_series_mass_per_hr"] = [x / convert_mass_to_kwh_factor for x in self.results_dict.get("massproducer_mass_production_series_kw")]
                     self.nested_outputs["Scenario"]["Site"][name][
-                        "year_one_mass_production_series_mass_per_hr"] = [x / convert_mass_to_kwh_factor for x in self.results_dict.get("massproducer_mass_production_series_kw")]
+                        "year_one_mass_production_series_mass_per_hr"] = self.results_dict.get(
+                                                                              "massproducer_mass_production_series_kw")
                     self.nested_outputs
                     self.nested_outputs["Scenario"]["Site"][name][
                         "year_one_mass_value"] = self.results_dict.get("massproducer_year_one_mass_value")
