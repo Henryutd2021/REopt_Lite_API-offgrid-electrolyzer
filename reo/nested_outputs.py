@@ -1360,7 +1360,7 @@ nested_output_definitions = {
                   "units": "MMBtu"
                 },
                 "year_one_electric_consumption_series_kw": {
-                  "type": float,
+                  "type": list_of_float,
                   "description": "Year one MassProducer electric consumption time series",
                   "units": "kW"
                 },

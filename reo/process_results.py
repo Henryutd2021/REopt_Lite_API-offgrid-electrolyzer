@@ -1063,6 +1063,9 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
             if d.get("year_one_to_grid_series_kw") is not None:
                 power_lists.append(d["year_one_to_grid_series_kw"])
 
+            if d.get("year_one_to_massproducer_series_kw") is not None:
+                power_lists.append(d["year_one_to_massproducer_series_kw"])
+
             power = [sum(x) for x in zip(*power_lists)]
             return power
 
