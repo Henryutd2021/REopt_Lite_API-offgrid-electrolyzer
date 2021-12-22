@@ -918,7 +918,7 @@ function add_load_balance_constraints(m, p)
             sum(m[:dvThermalProduction][t,ts] for t in p.AbsorptionChillers )/ p.AbsorptionChillerElecCOP +
 			p.ElecLoad[ts] +
             sum(p.GHPElectricConsumed[g,ts] * m[:binGHP][g] for g in p.GHPOptions) +
-            sum(p.ProductionFactor[t,ts] * p.LevelizationFactor[t] * m[:dvElectricToMassProducer][t,ts] for t in p.ElectricTechs) +
+            sum(m[:dvElectricToMassProducer][t,ts] for t in p.ElectricTechs) +
             m[:dvGridToMassProducer][ts]
 		)
 	else
@@ -934,7 +934,7 @@ function add_load_balance_constraints(m, p)
             sum(m[:dvThermalProduction][t,ts] for t in p.AbsorptionChillers )/ p.AbsorptionChillerElecCOP +
 			p.ElecLoad[ts] +
             sum(p.GHPElectricConsumed[g,ts] * m[:binGHP][g] for g in p.GHPOptions) +
-            sum(p.ProductionFactor[t,ts] * p.LevelizationFactor[t] * m[:dvElectricToMassProducer][t,ts] for t in p.ElectricTechs) +
+            sum(m[:dvElectricToMassProducer][t,ts] for t in p.ElectricTechs) +
             m[:dvGridToMassProducer][ts]
 		)
 	end
@@ -949,7 +949,7 @@ function add_load_balance_constraints(m, p)
         sum(m[:dvThermalProduction][t,ts] for t in p.ElectricChillers )/ p.ElectricChillerCOP +
         sum(m[:dvThermalProduction][t,ts] for t in p.AbsorptionChillers )/ p.AbsorptionChillerElecCOP +
 		(p.ElecLoad[ts] * m[:dvLoadServed][ts]) +
-		sum(p.ProductionFactor[t,ts] * p.LevelizationFactor[t] * m[:dvElectricToMassProducer][t,ts] for t in p.ElectricTechs)
+		sum(m[:dvElectricToMassProducer][t,ts] for t in p.ElectricTechs)
 	)
 
 	if !p.OffGridFlag # fix dvLoadServed to 100% for "on-grid" analyses 
