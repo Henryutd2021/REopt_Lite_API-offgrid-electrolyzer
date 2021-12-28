@@ -919,6 +919,7 @@ function add_load_balance_constraints(m, p)
 			p.ElecLoad[ts] +
             sum(p.GHPElectricConsumed[g,ts] * m[:binGHP][g] for g in p.GHPOptions) +
             sum(m[:dvElectricToMassProducer][t,ts] for t in p.ElectricTechs) +
+            sum(m[:dvStorageToMassProducer][k,ts] for k in p.ElecStorage)+
             m[:dvGridToMassProducer][ts]
 		)
 	else
@@ -935,6 +936,7 @@ function add_load_balance_constraints(m, p)
 			p.ElecLoad[ts] +
             sum(p.GHPElectricConsumed[g,ts] * m[:binGHP][g] for g in p.GHPOptions) +
             sum(m[:dvElectricToMassProducer][t,ts] for t in p.ElectricTechs) +
+            sum(m[:dvStorageToMassProducer][k,ts] for k in p.ElecStorage)+
             m[:dvGridToMassProducer][ts]
 		)
 	end
@@ -949,6 +951,7 @@ function add_load_balance_constraints(m, p)
         sum(m[:dvThermalProduction][t,ts] for t in p.ElectricChillers )/ p.ElectricChillerCOP +
         sum(m[:dvThermalProduction][t,ts] for t in p.AbsorptionChillers )/ p.AbsorptionChillerElecCOP +
 		(p.ElecLoad[ts] * m[:dvLoadServed][ts]) +
+		sum(m[:dvStorageToMassProducer][k,ts] for k in p.ElecStorage)+
 		sum(m[:dvElectricToMassProducer][t,ts] for t in p.ElectricTechs)
 	)
 
