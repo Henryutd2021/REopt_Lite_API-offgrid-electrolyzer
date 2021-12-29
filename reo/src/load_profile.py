@@ -739,7 +739,7 @@ class LoadProfile(BuiltInProfile):
             resilience_check_flag = True
             bau_sustained_time_steps = 0  # no outage
 
-        if outage_with_crit_load_pct or outage_with_crit_load_pct:
+        if outage_with_crit_load_pct or outage_with_user_crit_load:
 
             # splice critical loads in to load_list (used in optimal case)
             self.load_list[outage_start_time_step - 1:outage_end_time_step] = \

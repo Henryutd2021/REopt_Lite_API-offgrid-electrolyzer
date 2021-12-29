@@ -1280,7 +1280,7 @@ function add_cost_function(m, p)
 		m[:TotalProductionIncentive] * m[:r_tax_fraction_owner] -
 
         # MassProducer mass production value and feedstock cost
-        (m[:MassProductionValue] + m[:MassProducerFeedstockCost]) * m[:r_tax_fraction_owner]
+        (m[:MassProductionValue] - m[:MassProducerFeedstockCost]) * m[:r_tax_fraction_owner]
 	)
     #= Note: 0.9999*m[:MinChargeAdder] in Obj b/c when m[:TotalMinCharge] > (TotalEnergyCharges + m[:TotalDemandCharges] + TotalExportBenefit + m[:TotalFixedCharges])
 		it is arbitrary where the min charge ends up (eg. could be in m[:TotalDemandCharges] or m[:MinChargeAdder]).
