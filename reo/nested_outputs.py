@@ -1406,6 +1406,11 @@ nested_output_definitions = {
                   "description": "Year one hourly time series of hydrogen state of charge",
                   "units": "kg/hr"
                 },
+                "year_one_tank_soc_pct": {
+                  "type": "list_of_float",
+                  "description": "Year one hourly time series of hydrogen state of charge",
+                  "units": "%"
+                },
               },
               "FuelCell": {
                 "size_kw": {
@@ -1429,6 +1434,11 @@ nested_output_definitions = {
                   "units": "$"
                 },
                 "hydrogen_used_series_kg": {
+                  "type": "list_of_float",
+                  "description": "Temp variable for hydrogen usage at each hour",
+                  "units": "kg"
+                },
+                "to_battery": {
                   "type": "list_of_float",
                   "description": "Temp variable for hydrogen usage at each hour",
                   "units": "kg"

@@ -737,6 +737,15 @@ function add_storage_op_constraints(m, p)
 			fix(m[:dvGridToStorage][ts], 0.0, force=true)
 		end
 	end
+	if !isempty(p.TimeStepsWithGrid)
+		for ts in p.TimeStepsWithGrid
+		    for t in p.HydrogenUsingTechs
+		        for b in p.ElecStorage
+			        fix(m[:dvProductionToStorage][b, t, ts], 0.0, force=true)
+			    end
+			end
+		end
+	end
 end
 
 
@@ -1703,7 +1712,7 @@ function add_storage_results(m, p, r::Dict)
 
     if r["batt_kwh"] != 0
     	@expression(m, soc[ts in p.TimeStep], m[:dvStorageSOC]["Elec",ts] / r["batt_kwh"])
-        r["year_one_soc_series_pct"] = value.(soc)
+        r["year_one_soc_series_pct"] = round.(value.(soc), digits=3)
     else
         r["year_one_soc_series_pct"] = []
     end
@@ -2287,6 +2296,9 @@ function add_fuelcell_results(m, p, r::Dict)
 		sum(m[:dvRatedProduction][t,ts] * p.TimeStepScaling * p.ProductionFactor[t,ts] * p.OMcostPerUnitProd[t] * p.pwf_om
 			for t in p.HydrogenUsingTechs, ts in p.TimeStep))
 	r["year_one_variable_om_cost_us_dollars"] = round(value(FuelCellPerUnitProdOMCosts / (p.pwf_om * p.two_party_factor)), digits=0)
+	@expression(m, ToBattery[ts in p.TimeStep],
+		sum(m[:dvProductionToStorage]["Elec",t,ts] for t in p.HydrogenUsingTechs))
+	r["To_Battery"] = round.(value.(ToBattery), digits=3)
     nothing
 end
 
@@ -2294,6 +2306,12 @@ function add_tank_results(m, p, r::Dict)
 	r["tank_size_kg"] = round(value(sum(m[:dvStorageCapEnergy][t] for t in p.Tank)), digits=3)
 	@expression(m, Tanksoc[ts in p.TimeStep], sum(m[:dvStorageSOC][b,ts] for b in p.Tank))
 	r["year_one_tank_soc_series"] = round.(value.(Tanksoc), digits=3)
+	 if r["tank_size_kg"] != 0
+    	@expression(m, Tsoc[ts in p.TimeStep], m[:dvStorageSOC]["Tank",ts] / r["tank_size_kg"])
+        r["year_one_tsoc_series_pct"] = round.(value.(Tsoc), digits=3)
+    else
+        r["year_one_tsoc_series_pct"] = []
+    end
     nothing
 end
 

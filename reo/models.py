@@ -1151,6 +1151,8 @@ class TankModel(models.Model):
     size_kg = models.FloatField(null=True, blank=True)
     year_one_tank_soc_series = ArrayField(
             models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
+    year_one_tank_soc_pct= ArrayField(
+        models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
 
     @classmethod
     def create(cls, **kwargs):
@@ -1200,6 +1202,8 @@ class FuelCellModel(models.Model):
     hydrogen_used_series_kg = ArrayField(
             models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
     year_one_power_production_series = ArrayField(
+        models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
+    to_battery = ArrayField(
         models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
 
     @classmethod

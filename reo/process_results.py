@@ -1003,11 +1003,15 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
                         "year_one_variable_om_cost_us_dollars"] = self.results_dict.get("year_one_variable_om_cost_us_dollars", 0)
                     self.nested_outputs["Scenario"]["Site"][name][
                         "year_one_power_production_series"] = self.results_dict.get("year_one_power_production_series")
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "to_battery"] = self.results_dict.get("To_Battery")
 
                 elif name == "Tank":
                     self.nested_outputs["Scenario"]["Site"][name]["size_kg"] = self.results_dict.get("tank_size_kg", 0)
                     self.nested_outputs["Scenario"]["Site"][name][
                         "year_one_tank_soc_series"] = self.results_dict.get("year_one_tank_soc_series")
+                    self.nested_outputs["Scenario"]["Site"][name]["year_one_tank_soc_pct"] = \
+                        self.results_dict.get("year_one_tsoc_series_pct")
 
             # outputs that depend on multiple object results:
             future_replacement_cost, present_replacement_cost = self.replacement_costs_future_and_present
