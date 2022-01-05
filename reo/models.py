@@ -1129,6 +1129,7 @@ class MassProducerModel(models.Model):
     year_one_feedstock_cost = models.FloatField(null=True, blank=True)
     total_mass_value = models.FloatField(null=True, blank=True)
     total_feedstock_cost = models.FloatField(null=True, blank=True)
+    lcoh_us_dollars_per_kg = models.FloatField(null=True, blank=True)
 
     @classmethod
     def create(cls, **kwargs):

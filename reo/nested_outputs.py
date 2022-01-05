@@ -1393,7 +1393,12 @@ nested_output_definitions = {
                   "type": float,
                   "description": "Total life cycle cost of feedstock consumed by MassProducer",
                   "units": "$"
-                }
+                },
+                "lcoh_us_dollars_per_kg": {
+                  "type": "float",
+                  "description": "Year one hourly time series of hydrogen state of charge",
+                  "units": "$/kg"
+                },
             },
               "Tank": {
                 "size_kg": {
@@ -1410,7 +1415,7 @@ nested_output_definitions = {
                   "type": "list_of_float",
                   "description": "Year one hourly time series of hydrogen state of charge",
                   "units": "%"
-                },
+                }
               },
               "FuelCell": {
                 "size_kw": {

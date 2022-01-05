@@ -35,7 +35,7 @@ from reo.nested_outputs import nested_output_definitions
 import logging
 from celery import shared_task, Task
 from reo.exceptions import REoptError, UnexpectedError
-from reo.models import ModelManager, PVModel, FinancialModel, WindModel, AbsorptionChillerModel
+from reo.models import ModelManager, PVModel, FinancialModel, WindModel, AbsorptionChillerModel, MassProducerModel
 from reo.src.profiler import Profiler
 from reo.src.emissions_calculator import EmissionsCalculator
 from reo.utilities import annuity, TONHOUR_TO_KWHT, MMBTU_TO_KWH, GAL_DIESEL_TO_KWH, setup_capital_cost_offgrid
@@ -474,6 +474,101 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
                     (npv_annual_energy)
 
             return round(lcoe,4)
+
+        def calculate_lcoh(self, tech_results_dict, tech_inputs_dict, financials):
+            """
+            The LCOE is calculated as annualized costs (capital and O+M translated to current value) divided by annualized energy
+            output
+            :param tech_results_dict: dict of model results (i.e. outputs from PVModel )
+            :param tech_inputs_dict: dict of model results (i.e. inputs to PVModel )
+            :param financials: financial model storing input financial parameters
+            :return: float, LCOE in US dollars per kWh
+            """
+            years = financials.analysis_years # length of financial life
+
+            if financials.third_party_ownership:
+                discount_pct = financials.owner_discount_pct
+                federal_tax_pct = financials.owner_tax_pct
+            else:
+                discount_pct = financials.offtaker_discount_pct
+                federal_tax_pct = financials.offtaker_tax_pct
+
+            new_kw = (tech_results_dict.get('size_mass_per_time') or 0) - (tech_inputs_dict.get('existing_kw') or 0) # new capacity
+
+            if new_kw == 0:
+                return None
+
+            capital_costs = new_kw * tech_inputs_dict['installed_cost_us_dollars_per_mass_per_time'] # pre-incentive capital costs
+
+            annual_om = new_kw * tech_inputs_dict['om_cost_us_dollars_per_mass'] # NPV of O&M charges escalated over financial life
+
+            om_series = [annual_om * (1+financials.om_cost_escalation_pct)**yr for yr in range(1, years+1)]
+            npv_om = sum([om * (1.0/(1.0+discount_pct))**yr for yr, om in enumerate(om_series,1)])
+
+            #Incentives as calculated in the spreadsheet, note utility incentives are applied before state incentives
+            # utility_ibi = min(capital_costs * tech_inputs_dict['utility_ibi_pct'], tech_inputs_dict['utility_ibi_max_us_dollars'])
+            # utility_cbi = min(new_kw * tech_inputs_dict['utility_rebate_us_dollars_per_kw'], tech_inputs_dict['utility_rebate_max_us_dollars'])
+            # state_ibi = min((capital_costs - utility_ibi - utility_cbi) * tech_inputs_dict['state_ibi_pct'], tech_inputs_dict['state_ibi_max_us_dollars'])
+            # state_cbi = min(new_kw * tech_inputs_dict['state_rebate_us_dollars_per_kw'], tech_inputs_dict['state_rebate_max_us_dollars'])
+            # federal_cbi = new_kw * tech_inputs_dict['federal_rebate_us_dollars_per_kw']
+            # ibi = utility_ibi + state_ibi  #total investment-based incentives
+            # cbi = utility_cbi + federal_cbi + state_cbi #total capacity-based incentives
+
+            #calculate energy in the BAU case, used twice later on
+            if 'year_one_energy_produced_bau_kwh' in tech_results_dict.keys():
+                existing_energy_bau = (tech_results_dict['year_one_energy_produced_bau_kwh'] or 0)
+            else:
+                existing_energy_bau = 0
+
+            #calculate the value of the production-based incentive stream
+            # npv_pbi = 0
+            # if tech_inputs_dict['pbi_max_us_dollars'] > 0:
+            #     for yr in range(years):
+            #         if yr < tech_inputs_dict['pbi_years']:
+            #             degredation_pct = (1- (tech_inputs_dict.get('degradation_pct') or 0))**yr
+            #             base_pbi = min(tech_inputs_dict['pbi_us_dollars_per_kwh'] * \
+            #                 ((tech_results_dict['year_one_energy_produced_kwh'] or 0) - existing_energy_bau) * \
+            #                  degredation_pct,  tech_inputs_dict['pbi_max_us_dollars'] * degredation_pct )
+            #             base_pbi = base_pbi * (1.0/(1.0+discount_pct))**(yr+1)
+            #             npv_pbi += base_pbi
+
+            # npv_federal_itc = 0
+            # depreciation_schedule = np.array([0.0 for _ in range(years)])
+            # if tech_inputs_dict['macrs_option_years'] in [5,7]:
+            #     if tech_inputs_dict['macrs_option_years'] == 5:
+            #         schedule = macrs_five_year
+            #     if tech_inputs_dict['macrs_option_years'] == 7:
+            #         schedule = macrs_seven_year
+            #     federal_itc_basis = capital_costs - state_ibi - utility_ibi - state_cbi - utility_cbi - federal_cbi
+            #     federal_itc_amount = tech_inputs_dict['federal_itc_pct'] * federal_itc_basis
+            #     npv_federal_itc = federal_itc_amount * (1.0/(1.0+discount_pct))
+            #     macrs_bonus_basis = federal_itc_basis - (federal_itc_basis * tech_inputs_dict['federal_itc_pct'] * tech_inputs_dict['macrs_itc_reduction'])
+            #     macrs_basis = macrs_bonus_basis * (1 - tech_inputs_dict['macrs_bonus_pct'])
+            #     for i,r in enumerate(schedule):
+            #         if i < len(depreciation_schedule):
+            #             depreciation_schedule[i] = macrs_basis * r
+            #     depreciation_schedule[0] += (tech_inputs_dict['macrs_bonus_pct'] * macrs_bonus_basis)
+            # #
+            # tax_deductions = (np.array(om_series)  + np.array(depreciation_schedule)) * federal_tax_pct
+            # npv_tax_deductions = sum([i* (1.0/(1.0+discount_pct))**yr for yr,i in enumerate(tax_deductions,1)])
+
+            #we only care about the energy produced by new capacity in LCOE calcs
+            annual_energy = (tech_results_dict['year_one_mass_produced_mass'] or 0) - existing_energy_bau
+            # npv_annual_energy = sum([annual_energy * ((1.0/(1.0+discount_pct))**yr) * \
+            #     (1- (tech_inputs_dict.get('degradation_pct') or 0))**(yr-1) for yr, i in enumerate(tax_deductions,1)])
+
+            npv_annual_energy = sum([annual_energy * ((1.0 / (1.0 + discount_pct)) ** yr) * \
+                                     (1 - (tech_inputs_dict.get('degradation_pct') or 0)) ** (yr - 1) for yr in
+                                     range(1, years+1)])
+
+            # energy_cost = tech_results_dict['year_one_electric_consumption_kwh']
+
+            #LCOE is calculated as annualized costs divided by annualized energy
+
+            lcoh = (capital_costs + npv_om) / \
+                    (npv_annual_energy)
+
+            return round(lcoh,4)
 
         def get_output(self):
             self.get_nested()
@@ -961,6 +1056,7 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
                         self.nested_outputs["Scenario"]["Site"][name]["size_heat_pump_ton"] = ghpghx_chosen["outputs"]["peak_combined_heatpump_thermal_ton"] * \
                                                                                                 data['inputs']['Scenario']["Site"]["GHP"]["heatpump_capacity_sizing_factor_on_peak_load"]
                 elif name == "MassProducer":
+                    mp_model = MassProducerModel.objects.get(run_uuid=meta['run_uuid'])
                     mass_units = self.inputs["MassProducer"]["mass_units"]
                     time_units = self.inputs["MassProducer"]["time_units"]
                     convert_mass_to_kwh_factor, convert_time_to_hr_factor = MassProducer.get_mass_time_conversion_factor(mass_units, time_units)
@@ -983,6 +1079,13 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
                     self.nested_outputs["Scenario"]["Site"][name][
                         "year_one_mass_production_series_mass_per_hr"] = self.results_dict.get(
                                                                               "massproducer_mass_production_series_kw")
+                    if self.nested_outputs["Scenario"]["Site"][name]['size_mass_per_time'] > 0:
+                        self.nested_outputs["Scenario"]["Site"][name]['lcoh_us_dollars_per_kg'] = \
+                            self.calculate_lcoh(self.nested_outputs["Scenario"]["Site"][name], mp_model.__dict__,
+                            financials) + self.nested_outputs["Scenario"]["Site"]["Wind"]["lcoe_us_dollars_per_kwh"] * \
+                            mp_model.__dict__.get("electric_consumed_to_mass_produced_ratio_kwh_per_mass")
+                    else:
+                        self.nested_outputs["Scenario"]["Site"][name]['lcoh_us_dollars_per_kg'] = None
                     self.nested_outputs
                     self.nested_outputs["Scenario"]["Site"][name][
                         "year_one_mass_value"] = self.results_dict.get("massproducer_year_one_mass_value")
