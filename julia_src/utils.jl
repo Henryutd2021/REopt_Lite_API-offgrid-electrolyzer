@@ -129,6 +129,7 @@ Base.@kwdef struct Parameter
      MaxDemandInTier::Array{Float64,1}  # \delta^{t}_{e}: Maximum power demand in ratchet e
      MaxDemandMonthsInTier::Array{Float64,1}   # \delta^{mt}_{n}: Maximum monthly power demand in tier n
      MaxUsageInTier::Array{Float64,1}   # \delta^{tu}_{u}: Maximum monthly energy demand in tier u
+     MaxGridPurchase::Int
 	 
 	 ###  Incentive Parameters ###
 	 NMILLimits::AxisArray   # i^{n}_{v}: Net metering and interconnect limits in net metering regime v [kW]

@@ -341,6 +341,7 @@ class ElectricTariffModel(models.Model):
     emissions_region = models.TextField(null=True, blank=True)
     coincident_peak_load_active_timesteps = ArrayField(ArrayField(models.FloatField(null=True, blank=True), null=True, default=list), null=True, default=list)
     coincident_peak_load_charge_us_dollars_per_kw = ArrayField(models.FloatField(null=True, blank=True), null=True, default=list)
+    maximum_grid_purchase = models.IntegerField(null=True, blank=True)
 
     # Ouptuts
     year_one_energy_cost_us_dollars = models.FloatField(null=True, blank=True)

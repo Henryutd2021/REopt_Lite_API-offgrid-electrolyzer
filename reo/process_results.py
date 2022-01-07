@@ -1079,11 +1079,12 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
                     self.nested_outputs["Scenario"]["Site"][name][
                         "year_one_mass_production_series_mass_per_hr"] = self.results_dict.get(
                                                                               "massproducer_mass_production_series_kw")
-                    if self.nested_outputs["Scenario"]["Site"][name]['size_mass_per_time'] > 0:
-                        self.nested_outputs["Scenario"]["Site"][name]['lcoh_us_dollars_per_kg'] = \
-                            self.calculate_lcoh(self.nested_outputs["Scenario"]["Site"][name], mp_model.__dict__,
-                            financials) + self.nested_outputs["Scenario"]["Site"]["Wind"]["lcoe_us_dollars_per_kwh"] * \
-                            mp_model.__dict__.get("electric_consumed_to_mass_produced_ratio_kwh_per_mass")
+                    if self.nested_outputs["Scenario"]["Site"][name]['size_mass_per_time'] and\
+                            self.nested_outputs["Scenario"]["Site"]["Wind"]["lcoe_us_dollars_per_kwh"] != None:
+                                self.nested_outputs["Scenario"]["Site"][name]['lcoh_us_dollars_per_kg'] = \
+                                self.calculate_lcoh(self.nested_outputs["Scenario"]["Site"][name], mp_model.__dict__,
+                                financials) + self.nested_outputs["Scenario"]["Site"]["Wind"]["lcoe_us_dollars_per_kwh"] * \
+                                mp_model.__dict__.get("electric_consumed_to_mass_produced_ratio_kwh_per_mass")
                     else:
                         self.nested_outputs["Scenario"]["Site"][name]['lcoh_us_dollars_per_kg'] = None
                     self.nested_outputs

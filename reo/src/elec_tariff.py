@@ -70,6 +70,7 @@ class ElecTariff(object):
         self.tou_energy_rates = tou_energy_rates_us_dollars_per_kwh
         self.add_tou_energy_rates_to_urdb_rate = add_tou_energy_rates_to_urdb_rate
         self.override_urdb_rate_with_tou_energy_rates = False
+        self.maximum_grid_purchase = kwargs.get('maximum_grid_purchase')
 
         if coincident_peak_load_charge_us_dollars_per_kw is not None \
                 and coincident_peak_load_active_timesteps is not None:

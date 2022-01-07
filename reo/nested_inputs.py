@@ -28,7 +28,7 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-max_big_number = 1.0e8
+max_big_number = 1.0e9
 max_incentive = 1.0e10
 max_years = 75
 macrs_schedules = [0, 5, 7]
@@ -828,6 +828,13 @@ nested_input_definitions = {
           "depends_on":["coincident_peak_load_active_timesteps"],
           "description": "Optional coincident peak demand charge that is applied to the max load during the timesteps specified in coincident_peak_load_active_timesteps"
         },
+        "maximum_grid_purchase": {
+          "type": "float",
+          "min": 0.0,
+          "max": max_big_number,
+          "default": max_big_number,
+          "description": "Maximum power purchase"
+        }
       },
 
       "FuelTariff": {
