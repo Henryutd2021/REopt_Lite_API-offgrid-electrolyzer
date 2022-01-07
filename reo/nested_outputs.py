@@ -1415,6 +1415,11 @@ nested_output_definitions = {
                   "type": "list_of_float",
                   "description": "Year one hourly time series of hydrogen state of charge",
                   "units": "%"
+                },
+                "hydrogen_export": {
+                  "type": "list_of_float",
+                  "description": "hydrogen for selling",
+                  "units": "kg"
                 }
               },
               "FuelCell": {

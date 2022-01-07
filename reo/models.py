@@ -1154,6 +1154,8 @@ class TankModel(models.Model):
             models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
     year_one_tank_soc_pct= ArrayField(
         models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
+    hydrogen_export = ArrayField(
+        models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
 
     @classmethod
     def create(cls, **kwargs):

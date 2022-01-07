@@ -73,6 +73,7 @@ function add_continuous_variables(m, p)
         # Tank and FuelCell
         dvMassProduction[p.MassProducerTechs, p.TimeStep] >= 0
         dvHydrogenToFuelcell[p.HydrogenUsingTechs, p.TimeStep] >= 0
+        dvHydrogenExport[p.TimeStep] >= 0
     end
 	if !isempty(p.ExportTiers)
 		@variable(m, dvProductionToGrid[p.Tech, p.ExportTiers, p.TimeStep] >= 0)  # X^{ptg}_{tuh}: Exports from electrical production to the grid by technology t in demand tier u during time step h [kW]   (NEW)
@@ -175,7 +176,7 @@ function add_cost_expressions(m, p)
     # MassProducer mass production value and feedstock cost
     if !isempty(p.MassProducerTechs)
         m[:MassProductionValue] = @expression(m, p.two_party_factor * p.pwf_e *
-            p.MassProducerMassValue * sum(sum(m[:dvMassProduction][t,ts] for t in p.MassProducerTechs) - sum(m[:dvHydrogenToFuelcell][k, ts] for k in p.HydrogenUsingTechs) for ts in p.TimeStep))
+            p.MassProducerMassValue * sum(m[:dvHydrogenExport][ts] for ts in p.TimeStep))
         m[:MassProducerFeedstockCost] = @expression(m, p.two_party_factor * p.pwf_e * p.TimeStepScaling *
             p.MassProducerFeedstockCost * p.MassProducerConsumptionRatios["Feedstock"] *
             sum(m[:dvRatedProduction][t,ts] * p.ProductionFactor[t,ts] for t in p.MassProducerTechs, ts in p.TimeStep))
@@ -693,7 +694,7 @@ function add_storage_op_constraints(m, p)
 
     @constraint(m, TankInventoryCon[b in p.Tank, ts in p.TimeStep],
     	        m[:dvStorageSOC][b,ts] == m[:dvStorageSOC][b,ts-1] + sum(m[:dvMassProduction][t, ts]
-    	        for t in p.MassProducerTechs)  - sum(m[:dvHydrogenToFuelcell][k, ts] for k in p.HydrogenUsingTechs)
+    	        for t in p.MassProducerTechs)  - m[:dvHydrogenExport][ts] - sum(m[:dvHydrogenToFuelcell][k, ts] for k in p.HydrogenUsingTechs)
 				)
 
 	@constraint(m, HydrogenBurnCon[b in p.HydrogenUsingTechs, ts in p.TimeStep],
@@ -1803,6 +1804,7 @@ end
 function add_null_tank_results(m, p, r::Dict)
 	r["tank_size_kg"] = 0.0
 	r["year_one_tank_soc_series"] = []
+	r["hydrogen_export"] = []
 	nothing
 end
 
@@ -2306,6 +2308,7 @@ function add_tank_results(m, p, r::Dict)
 	r["tank_size_kg"] = round(value(sum(m[:dvStorageCapEnergy][t] for t in p.Tank)), digits=3)
 	@expression(m, Tanksoc[ts in p.TimeStep], sum(m[:dvStorageSOC][b,ts] for b in p.Tank))
 	r["year_one_tank_soc_series"] = round.(value.(Tanksoc), digits=3)
+	r["hydrogen_export"] = round.(value.(m[:dvHydrogenExport]), digits=3)
 	 if r["tank_size_kg"] != 0
     	@expression(m, Tsoc[ts in p.TimeStep], m[:dvStorageSOC]["Tank",ts] / r["tank_size_kg"])
         r["year_one_tsoc_series_pct"] = round.(value.(Tsoc), digits=3)
