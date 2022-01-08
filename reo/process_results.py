@@ -498,9 +498,9 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
             if new_kw == 0:
                 return None
 
-            capital_costs = new_kw * tech_inputs_dict['installed_cost_us_dollars_per_mass_per_time'] # pre-incentive capital costs
+            capital_costs = new_kw * tech_inputs_dict['installed_cost_us_dollars_per_mass_per_time']# pre-incentive capital costs
 
-            annual_om = new_kw * tech_inputs_dict['om_cost_us_dollars_per_mass'] # NPV of O&M charges escalated over financial life
+            annual_om = new_kw * tech_inputs_dict['om_cost_us_dollars_per_mass_per_time'] # NPV of O&M charges escalated over financial life
 
             om_series = [annual_om * (1+financials.om_cost_escalation_pct)**yr for yr in range(1, years+1)]
             npv_om = sum([om * (1.0/(1.0+discount_pct))**yr for yr, om in enumerate(om_series,1)])
@@ -565,8 +565,7 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
 
             #LCOE is calculated as annualized costs divided by annualized energy
 
-            lcoh = (capital_costs + npv_om) / \
-                    (npv_annual_energy)
+            lcoh = (capital_costs + npv_om) / (npv_annual_energy) + tech_inputs_dict.get('om_cost_us_dollars_per_mass')
 
             return round(lcoh,4)
 
@@ -1079,12 +1078,25 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
                     self.nested_outputs["Scenario"]["Site"][name][
                         "year_one_mass_production_series_mass_per_hr"] = self.results_dict.get(
                                                                               "massproducer_mass_production_series_kw")
-                    if self.nested_outputs["Scenario"]["Site"][name]['size_mass_per_time'] and\
-                            self.nested_outputs["Scenario"]["Site"]["Wind"]["lcoe_us_dollars_per_kwh"] != None:
-                                self.nested_outputs["Scenario"]["Site"][name]['lcoh_us_dollars_per_kg'] = \
+                    if self.nested_outputs["Scenario"]["Site"][name]['size_mass_per_time']:
+                        if self.nested_outputs["Scenario"]["Site"]['Wind']['lcoe_us_dollars_per_kwh'] is not None:
+                            wind_energy_cost = sum(self.nested_outputs["Scenario"]["Site"]['Wind']['year_one_to_massproducer_series_kw']) * \
+                                               self.nested_outputs["Scenario"]["Site"]['Wind']['lcoe_us_dollars_per_kwh']
+                        else:
+                            wind_energy_cost = 0
+
+                        if sum(self.nested_outputs["Scenario"]["Site"]['ElectricTariff']['year_one_to_massproducer_series_kw']) > 0:
+                            util_energy_cost = sum(a * b for a, b in zip(
+                                self.nested_outputs["Scenario"]["Site"]['ElectricTariff']['year_one_to_massproducer_series_kw'],
+                                self.nested_outputs["Scenario"]["Site"]['ElectricTariff'][
+                                    'year_one_energy_cost_series_us_dollars_per_kwh']))
+                        else:
+                            util_energy_cost = 0
+
+                        self.nested_outputs["Scenario"]["Site"][name]['lcoh_us_dollars_per_kg'] = \
                                 self.calculate_lcoh(self.nested_outputs["Scenario"]["Site"][name], mp_model.__dict__,
-                                financials) + self.nested_outputs["Scenario"]["Site"]["Wind"]["lcoe_us_dollars_per_kwh"] * \
-                                mp_model.__dict__.get("electric_consumed_to_mass_produced_ratio_kwh_per_mass")
+                                financials) + \
+                                (wind_energy_cost+util_energy_cost)/self.nested_outputs["Scenario"]["Site"][name]['year_one_mass_produced_mass']
                     else:
                         self.nested_outputs["Scenario"]["Site"][name]['lcoh_us_dollars_per_kg'] = None
                     self.nested_outputs
