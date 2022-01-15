@@ -1579,10 +1579,11 @@ function reopt_results(m, p, r::Dict)
 
 	if p.OffGridFlag
 		add_load_results(m, p, r)
-		add_offgrid_financial_results(m, p, r)
+
 	else
 		add_null_load_results(m, p, r)
 		add_null_offgrid_financial_results
+		add_offgrid_financial_results(m, p, r)
 	end
 	return r
 end
@@ -1709,7 +1710,7 @@ end
 
 function add_offgrid_financial_results(m, p, r::Dict)
 	lcc = round(value(m[:REcosts]) + p.OtherCapitalCosts + p.OtherAnnualCosts)
-	@expression(m, AnnualkWhServed, sum(p.ElecLoad[ts] * value(m[:dvLoadServed][ts]) for  ts in p.TimeStep))
+	@expression(m, AnnualkWhServed, sum(p.ProductionFactor[t,ts] * p.LevelizationFactor[t] * m[:dvRatedProduction][t,ts] for t in m[:WindTechs], ts in p.TimeStep))
 	r["total_other_cap_costs"] = p.OtherCapitalCosts
 	r["total_annual_costs"] = p.OtherAnnualCosts
 	r["microgrid_lcoe"] = round(lcc / p.pwf_om / value(AnnualkWhServed), digits=4)
