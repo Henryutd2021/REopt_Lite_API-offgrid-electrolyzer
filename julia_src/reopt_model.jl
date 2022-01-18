@@ -380,7 +380,7 @@ end
 
 function add_grid_upper_bounds_constraints(m, p)
 	@constraint(m, MaxGridPurch[u in p.PricingTier, ts in p.TimeStepsWithGrid],
-		m[:dvGridPurchase][u, ts] + m[:dvGridToMassProducer][ts] + m[:dvGridToStorage][ts] <= p.MaxGridPurchase
+		m[:dvGridPurchase][u, ts] <= p.MaxGridPurchase
 	)
 end
 
@@ -1358,9 +1358,9 @@ function reopt_run(m, p::Parameter)
 		end
 	end
 
-	if !isempty(p.TimeStepsWithGrid)
-	    add_grid_upper_bounds_constraints(m, p)
-    end
+
+	add_grid_upper_bounds_constraints(m, p)
+
 	### Constraint set (1): Fuel Burn Constraints
 	add_fuel_constraints(m, p)
 
