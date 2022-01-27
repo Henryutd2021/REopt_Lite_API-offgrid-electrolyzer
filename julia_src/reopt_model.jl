@@ -1359,7 +1359,7 @@ function reopt_run(m, p::Parameter)
 	end
 
 
-	add_grid_upper_bounds_constraints(m, p)
+	# add_grid_upper_bounds_constraints(m, p)
 
 	### Constraint set (1): Fuel Burn Constraints
 	add_fuel_constraints(m, p)
