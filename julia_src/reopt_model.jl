@@ -251,8 +251,8 @@ function add_bigM_adjustments(m, p)
 		added_power = p.StorageMaxSizePower["Elec"]
 		added_energy = p.StorageMaxSizeEnergy["Elec"]
 	else
-		added_power = 1.0e-3
-		added_energy = 1.0e-3
+		added_power = 1.0e-6
+		added_energy = 1.0e-6
 	end
 
     if !isempty(p.GHPOptions)
@@ -270,14 +270,14 @@ function add_bigM_adjustments(m, p)
 					for ts in p.TimeStepRatchetsMonth[mth]])  -
 					sum(m[:NewMaxDemandMonthsInTier][mth,np] for np in 1:(n-1))]
 				)
-                m[:NewMaxDemandMonthsInTier][mth,n] = 1.0E6
+                m[:NewMaxDemandMonthsInTier][mth,n] = 1.0E12
 			else
 				m[:NewMaxDemandMonthsInTier][mth,n] = minimum([p.MaxDemandMonthsInTier[n],
 					added_power + 2*maximum([p.ElecLoad[ts] + p.CoolingLoad[ts] +
                     add_ghp_heating_elec * p.HeatingLoad[ts]
 					for ts in p.TimeStepRatchetsMonth[mth]])]
                 )
-                m[:NewMaxDemandMonthsInTier][mth,n] = 1.0E6
+                m[:NewMaxDemandMonthsInTier][mth,n] = 1.0E12
 			end
 		end
 	end
@@ -292,14 +292,14 @@ function add_bigM_adjustments(m, p)
 					for ts in p.TimeStep])  -
 				sum(m[:NewMaxDemandInTier][r,ep] for ep in 1:(e-1))
 				])
-                m[:NewMaxDemandInTier][r,e] = 1.0E6
+                m[:NewMaxDemandInTier][r,e] = 1.0E12
 			else
 				m[:NewMaxDemandInTier][r,e] = minimum([p.MaxDemandInTier[e],
 				added_power + 2*maximum([p.ElecLoad[ts] + p.CoolingLoad[ts] +
                 add_ghp_heating_elec * p.HeatingLoad[ts]
 					for ts in p.TimeStep])
 				])
-                m[:NewMaxDemandInTier][r,e] = 1.0E6
+                m[:NewMaxDemandInTier][r,e] = 1.0E12
 			end
 		end
 	end
@@ -325,7 +325,7 @@ function add_bigM_adjustments(m, p)
         end
     else
         for mth in p.Month
-            m[:NewMaxUsageInTier][mth,1] = 1.0E8
+            m[:NewMaxUsageInTier][mth,1] = 1.0E12
         end
     end
 	# NewMaxSize generates a new maximum size that is equal to the largest monthly load of the year.
