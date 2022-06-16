@@ -565,6 +565,8 @@ class WindModel(models.Model):
             models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
     year_one_to_massproducer_series_kw = ArrayField(
             models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
+    capacity_factor = ArrayField(
+        models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
 
     @classmethod
     def create(cls, **kwargs):

@@ -531,6 +531,11 @@ nested_output_definitions = {
                   "description": "Year one hourly time series of Wind serving MassProducer electric consumption",
                   "units": "kW"
                 },
+                "capacity_factor":{
+                  "type": "list_of_float",
+                  "description": "Year one hourly time series of Wind production facator",
+                  "units": "kWh/kW,"
+                }
               },
 
               "Storage": {

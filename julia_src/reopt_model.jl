@@ -1895,6 +1895,9 @@ function add_wind_results(m, p, r::Dict)
 
 	r["WINDtoCurtail"] = round.(value.(WINDtoCurtail), digits=3)
 
+	@expression(m, pf[ts in p.TimeStep], sum(p.ProductionFactor[t,ts] for t in m[:WindTechs])/2)
+	r["prod_factor"] = round.(value.(pf), digits=3)
+
 	r["WINDtoGrid"] = zeros(length(p.TimeStep))
 	if !isempty(p.ExportTiers)
 		@expression(m, WINDtoGrid[ts in p.TimeStep],
