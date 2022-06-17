@@ -1054,11 +1054,11 @@ function add_prod_grid_constraints(m, p)
         }
 	)
 
-	@constraint(m, ExportOnlyAfterSiteLoadMetCon[ts in p.TimeStep],
-		!m[:binNoGridPurchases][ts] => {
-            sum(m[:dvProductionToGrid][t,u,ts] for t in p.Tech, u in p.ExportTiers) <= 0
-        }
-	)
+# 	@constraint(m, ExportOnlyAfterSiteLoadMetCon[ts in p.TimeStep],
+# 		!m[:binNoGridPurchases][ts] => {
+#             sum(m[:dvProductionToGrid][t,u,ts] for t in p.Tech, u in p.ExportTiers) <= 0
+#         }
+# 	)
 end
 
 
