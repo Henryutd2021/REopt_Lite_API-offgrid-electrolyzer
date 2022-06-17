@@ -120,6 +120,7 @@ class ScenarioModel(models.Model):
     optimality_tolerance_techs = models.FloatField(null=True, blank=True)
     add_soc_incentive = models.BooleanField(null=True, blank=True)
     off_grid_flag = models.BooleanField(null=True, blank=True)
+    rated_electrolyzer = models.BooleanField(null=True, blank=True)
 
     lower_bound = models.FloatField(null=True, blank=True)
     optimality_gap = models.FloatField(null=True, blank=True)

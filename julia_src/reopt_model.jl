@@ -847,6 +847,13 @@ function add_tech_size_constraints(m, p)
 		m[:dvRatedProduction][t,ts] == m[:dvSize][t]
 	)
 
+	#Electrolyzers are always at rated production
+	if p.RatedElectrolyzer
+	   @constraint(m, MassSizeCon[t in p.MassProducerTechs, ts in p.TimeStep],
+	       m[:dvRatedProduction][t,ts] == m[:dvSize][t]
+       )
+	end
+
 	##Constraint (7e): Derate factor limits production variable (separate from ProductionFactor)
     for ts in p.TimeStep
         @constraint(m, [t in p.Tech; !(t in p.TechsNoTurndown)],

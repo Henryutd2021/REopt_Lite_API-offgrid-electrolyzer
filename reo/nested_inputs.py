@@ -346,6 +346,11 @@ nested_input_definitions = {
       "default": False,
       "description": "Set to True to enable off-grid analyses."
     },
+    "rated_electrolyzer":{
+      "type": "bool",
+      "default": True,
+      "description": "Set to False to have variable production electrolyzers"
+    },
     "Site": {
       "latitude": {
         "type": "float",

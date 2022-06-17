@@ -51,7 +51,7 @@ class DataManager:
     """
     Creates input dicts for reopt.jl and manages data transfer between Celery tasks
     """
-    def __init__(self, run_id, user_id=None, n_timesteps=8760):
+    def __init__(self, run_id, rated_electrolyzer, user_id=None, n_timesteps=8760):
         self.pvs = []
         self.pvnms = []
         self.pv1 = None
@@ -108,6 +108,7 @@ class DataManager:
 
         self.run_id = run_id
         self.user_id = user_id
+        self.rated_electrolyzer = rated_electrolyzer
         self.n_timesteps = n_timesteps
         self.steplength = 8760.0 / self.n_timesteps
         self.pwf_e = 0  # used in results.py -> outage_costs.py to escalate & discount avoided outage costs
@@ -1725,6 +1726,7 @@ class DataManager:
             'OtherCapitalCosts': sf.other_capital_costs_us_dollars,
             'OtherAnnualCosts': sf.other_annual_costs_us_dollars_per_year * pwf_om,
             #MassProducer
+            'RatedElectrolyzer': self.rated_electrolyzer,
             'MassProducerTechs': massproducer_techs,
             "TechCanSupplyMassProducer": can_supply_mp,
             "MassProducerConsumptionRatioIndex": massproducer_consumption_ratios_index,
@@ -1897,6 +1899,7 @@ class DataManager:
             'OtherCapitalCosts': sf.other_capital_costs_us_dollars,
             'OtherAnnualCosts': sf.other_annual_costs_us_dollars_per_year * pwf_om,
             # MassProducer
+            'RatedElectrolyzer': True,
             'MassProducerTechs': massproducer_techs_bau,
             "TechCanSupplyMassProducer": can_supply_mp_bau,
             "MassProducerConsumptionRatioIndex": massproducer_consumption_ratios_index,

@@ -260,6 +260,7 @@ Base.@kwdef struct Parameter
     OtherCapitalCosts::Float64
     OtherAnnualCosts::Float64
 	# MassProducer
+	RatedElectrolyzer::Bool
     MassProducerTechs::Array{String,1}
     TechCanSupplyMassProducer::Array{String,1}
     MassProducerConsumptionRatioIndex::Array{String,1}
