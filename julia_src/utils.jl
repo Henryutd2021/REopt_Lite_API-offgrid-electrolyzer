@@ -130,6 +130,7 @@ Base.@kwdef struct Parameter
      MaxDemandMonthsInTier::Array{Float64,1}   # \delta^{mt}_{n}: Maximum monthly power demand in tier n
      MaxUsageInTier::Array{Float64,1}   # \delta^{tu}_{u}: Maximum monthly energy demand in tier u
      MaxGridPurchase::Int
+     Ratio:: Float64
 	 
 	 ###  Incentive Parameters ###
 	 NMILLimits::AxisArray   # i^{n}_{v}: Net metering and interconnect limits in net metering regime v [kW]
@@ -260,6 +261,7 @@ Base.@kwdef struct Parameter
     OtherCapitalCosts::Float64
     OtherAnnualCosts::Float64
 	# MassProducer
+	RatioFlag::Bool
 	RatedElectrolyzer::Bool
     MassProducerTechs::Array{String,1}
     TechCanSupplyMassProducer::Array{String,1}

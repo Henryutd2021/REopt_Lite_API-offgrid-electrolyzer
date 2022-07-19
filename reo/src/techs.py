@@ -212,6 +212,7 @@ class Wind(Tech):
         self.prod_factor_series_kw = prod_factor_series_kw
         self.sr_required_pct = kwargs.get("sr_required_pct")
         self.existing_kw = existing_kw
+        self.ratio = kwargs.get('ratio')
 
         # if user hasn't entered the federal itc, itc value gets assigned based on size_class
         if self.incentives.federal.itc == 0.3:

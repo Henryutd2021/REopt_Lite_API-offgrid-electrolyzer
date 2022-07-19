@@ -351,6 +351,11 @@ nested_input_definitions = {
       "default": True,
       "description": "Set to False to have variable production electrolyzers"
     },
+    "ratio_flag":{
+      "type": "bool",
+      "default": False,
+      "description": "Set to True to have wind ratio in hydrogen production"
+    },
     "Site": {
       "latitude": {
         "type": "float",
@@ -905,6 +910,13 @@ nested_input_definitions = {
           "max": 1.0e9,
           "default": 0.0,
           "description": "Existing Wind size"
+        },
+        "ratio":{
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 1.0,
+          "description": "Proportion of wind energy in hydrogen production"
         },
         "wind_meters_per_sec": {
           "type": "list_of_float",

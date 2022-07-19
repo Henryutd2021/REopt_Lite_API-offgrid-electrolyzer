@@ -121,6 +121,7 @@ class ScenarioModel(models.Model):
     add_soc_incentive = models.BooleanField(null=True, blank=True)
     off_grid_flag = models.BooleanField(null=True, blank=True)
     rated_electrolyzer = models.BooleanField(null=True, blank=True)
+    ratio_flag = models.BooleanField(null=True, blank=True)
 
     lower_bound = models.FloatField(null=True, blank=True)
     optimality_gap = models.FloatField(null=True, blank=True)
@@ -510,6 +511,7 @@ class WindModel(models.Model):
     # Inputs
     run_uuid = models.UUIDField(unique=True)
     existing_kw = models.FloatField(null=True, blank=True)
+    ratio = models.FloatField(null=True, blank=True)
     size_class = models.TextField(null=True, blank=True)
     wind_meters_per_sec = ArrayField(
             models.FloatField(null=True, blank=True), null=True, blank=True, default=list)

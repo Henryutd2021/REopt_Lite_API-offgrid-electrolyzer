@@ -597,6 +597,14 @@ function add_mass_producer_constraints(m, p)
 	                m[:dvMassProduction][t, ts] == p.TimeStepScaling *
 	                m[:dvRatedProduction][t,ts] * p.ProductionFactor[t,ts]
 	                )
+	    # Wind Ratio
+	    if p.RatioFlag
+	        @constraint(m, WindRatio,
+	                sum(m[:dvElectricToMassProducer][t,ts] for t in m[:WindTechs], ts in p.TimeStep)/
+	                sum(p.TechClassMinSize["MASSPRODUCER"] * p.ProductionFactor[t,ts] * p.MassProducerConsumptionRatios["Electric"]
+                        for t in p.MassProducerTechs, ts in p.TimeStep) >= p.Ratio
+                    )
+        end
 	end
 end
 
