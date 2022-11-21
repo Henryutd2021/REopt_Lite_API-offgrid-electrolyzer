@@ -64,7 +64,7 @@ services:
     container_name: xpress_license_server
     build:
       context: julia_src/xpress/licenseserver
-    mac_address: 46:40:b9:60:e1:46
+    mac_address: c4:b3:01:d3:d5:eb
     command: xpserver
     expose:
       - 27100

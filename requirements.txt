@@ -53,6 +53,7 @@ more-itertools==8.7.0
 msrest==0.6.21
 msrestazure==0.6.4
 munch==2.5.0
+nrel-pysam==3.0.2
 numpy==1.17.5
 oauthlib==3.1.0
 openpyxl==3.0.6

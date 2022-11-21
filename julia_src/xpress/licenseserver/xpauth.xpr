@@ -1,17 +1,18 @@
 use_server server="my_server_name"
 license allow-clock-rollback allow-virtual-hostids any-subnet \
-	expiry="16-sep-2022" features="Hyper OptLib OptConsole \
+	expiry="16-sep-2023" features="Hyper OptLib OptConsole \
 	MosRTLib MosMCLib mmxprs MosConsole BCL Integer Network \
 	Barrier Quadratic ParaMIP=1024 ParaBar=1024 SLPLib SLPConsole \
 	mmxslp MISLP OptJava MosRTJava MosMCJava BCLJava IVE mmsp \
-	kalis mmodbc mmoci mmxad" fico_xpress_release="8.12" \
-	floating="uncounted" hostid="any" platform="win32 win_x86_64 \
-	sun_sparc linux_x86 hpux_pa aix_ppc win_ia64 sun_sparc64 \
-	linux_x86_64 linux_ia64 hpux_pa64 hpux_ia64 aix_rs64 \
-	macos_x86_64" release="2021" server_hostid="mx4640b960e146" \
-	terminal-services sig="2220 f639 b666 10b1 4ad2 83a4 cd41 53c1 \
-	d939 3109 9461 2295 efd2 746a 7189 032f 1d81 69b7 95f1 fb11 \
-	78c5 6d25 41bb 94f3 9f8d 3597 b8c0 ef39 ae23 0eeb dd5b 1d5e"
+	kalis mmodbc mmoci mmxad XpressNL mmxnlp MINLP" \
+	fico_xpress_release="8.14" floating="uncounted" hostid="any" \
+	platform="win32 win_x86_64 sun_sparc linux_x86 hpux_pa aix_ppc \
+	win_ia64 sun_sparc64 linux_x86_64 linux_ia64 hpux_pa64 \
+	hpux_ia64 aix_rs64 macos_x86_64" release="2022" \
+	server_hostid="mxc4b301d3d5eb" terminal-services sig="8418 \
+	4b9f 519f 5028 4991 c559 00d2 9dcb 2485 3872 0484 d671 bfcc \
+	3cb3 95ac 3799 a334 918a 198e bc2f 61bd 06e1 ddba f1d7 f458 \
+	4267 93f4 a51d f038 fe02 9c9d 96ef"
 
 ! FICO Xpress License Server
 ! [UserID 1072, OrderID 2294, LicenseID 05695]
@@ -20,18 +21,47 @@ license allow-clock-rollback allow-virtual-hostids any-subnet \
 ! For utdallas, University of Texas at Dallas 
 ! Organisation: University of Texas at Dallas 
 ! Notes:
-
+!    == (c) Fair Isaac Corporation 2005-2020. All rights reserved ==
+!    WARNING: You are advised to run this program as a non-root user to ensure
+!             that the host ID can still be detected.
+!    
+!    When applying for a license you must send the entire text printed below to your
+!    vendor:
+!    
+!    &lt;xphostid version=&quot;3.1.5&quot; xpress=&quot;8.12&quot;
+!    build=&quot;linux_x86_64&quot;&gt;
+!      &lt;hostid type=&quot;i&quot;&gt;
+!        &lt;desc&gt;eth0&lt;/desc&gt;
+!        &lt;id&gt;mxc4b301d3d5eb&lt;/id&gt;
+!      &lt;/hostid&gt;
+!    &lt;/xphostid&gt;
+!    
+!    &lt;sysinfo&gt;
+!      &lt;hostname&gt;f72dead2cc47&lt;/hostname&gt;
+!      &lt;arch&gt;Intel(R) Xeon(R) CPU E5-2680 v3 @ 2.50GHz&lt;/arch&gt;
+!      &lt;os&gt;Linux version 5.10.102.1-microsoft-standard-WSL2 (oe-user@oe-host)
+!    (x86_64-msft-linux-gcc (GCC) 9.3.0, GNU ld (GNU Binutils) 2.34.0.20200220) #1
+!    SMP Wed Mar 2 00:30:59 UTC 2022&lt;/os&gt;
+!      &lt;cpus&gt;1&lt;/cpus&gt;
+!      &lt;cores&gt;24&lt;/cores&gt;
+!      &lt;virtual-cpus&gt;48&lt;/virtual-cpus&gt;
+!    &lt;/sysinfo&gt;
+!    
+!    &lt;signature&gt;b739 cff2 1e45 2493 4445 7492 3486 d85c 38ee 038a dd37 5fc5
+!      1b4f 6948 0bc5 831b 85e7 3390 28c3 0262 2e3f 6312 a78e 1cab 834b 4415
+!      8939 0fd0 cc49 53ed 9342 9dee&lt;/signature&gt;
 
 ! Type: Floating
-! Expiry: 16 Sep 2022
-! Release: 8.12
+! Expiry: 16 Sep 2023
+! Release: 8.14
 ! Features: 
 !    Optimizer,Mosel,BCL,MIP,Barrier,Network,Quadratic,Par MIP,Par
-!    Barrier,SLP,MISLP,Java,Kalis,SP,ODBC,OCI,IVE,TS,Console,XAD
+!    Barrier,SLP,MISLP,Java,Kalis,SP,ODBC,OCI,IVE,TS,Console,XAD,XpressNL,mmxnlp,MINL
+!    P
 ! Platforms: Win32, Win64, Solaris32, Linux32, HPUX32, AIX32, WinIA64,
 ! Solaris64, Linux64, LinuxIA64, HPUX64, HPUXIA64, AIX64, MacOSAMD64
 ! Concurrent processes: unlimited
 ! Number of parallel barrier threads: 1024
 ! Number of parallel MIP threads: 1024
 
-! Hostid: mx4640b960e146		! Academic
+! Hostid: mxc4b301d3d5eb		! Academic
