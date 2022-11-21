@@ -1221,6 +1221,22 @@ class FuelCellModel(models.Model):
         obj.save()
         return obj
 
+class CSPModel(models.Model):
+    # Inputs
+    run_uuid = models.UUIDField(unique=True)
+    csp = models.BooleanField(null=True, blank=True)
+
+    # Outputs
+    size_kw = models.FloatField(null=True, blank=True)
+    average_yearly_energy_produced_kwh = models.FloatField(null=True, blank=True)
+
+
+    @classmethod
+    def create(cls, **kwargs):
+        obj = cls(**kwargs)
+        obj.save()
+        return obj
+
 class MessageModel(models.Model):
     """
     For Example:
@@ -1543,7 +1559,7 @@ class ModelManager(object):
         site_keys = ['PV', 'Storage', 'Financial', 'LoadProfile', 'LoadProfileBoilerFuel', 'LoadProfileChillerThermal',
                      'ElectricTariff', 'FuelTariff', 'Generator', 'Wind', 'CHP', 'Boiler', 'ElectricChiller',
                      'AbsorptionChiller', 'HotTES', 'ColdTES', 'NewBoiler', 'SteamTurbine', 'GHP', 'MassProducer',
-                     'Tank', 'FuelCell']
+                     'Tank', 'FuelCell', 'CSP']
 
         resp = dict()
         resp['outputs'] = dict()

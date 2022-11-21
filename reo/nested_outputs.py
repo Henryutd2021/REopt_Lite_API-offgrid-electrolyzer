@@ -378,6 +378,19 @@ nested_output_definitions = {
                 }
               },
 
+              "CSP": {
+                  "average_yearly_energy_produced_kwh": {
+                    "type": "float",
+                    "description": "Average annual energy produced by the CSP system over one year",
+                    "units": "kWh"
+                  },
+                  "size_kw": {
+                    "type": "float",
+                    "description": "Optimal PV system size",
+                    "units": "kW"
+                  },
+              },
+
               "PV": {
                 "pv_name": {
                   "type": "str",
@@ -481,10 +494,10 @@ nested_output_definitions = {
                   "description": "Recommended wind system size",
                   "units": "kW"
                 },
-              "existing_wind_om_cost_us_dollars": {
-                "type": "float",
-                "description": "Lifetime O&M cost for existing Wind system.",
-                "units": "$"
+                "existing_wind_om_cost_us_dollars": {
+                  "type": "float",
+                  "description": "Lifetime O&M cost for existing Wind system.",
+                  "units": "$"
                 },
                 "average_yearly_energy_produced_kwh": {
                   "type": "float",

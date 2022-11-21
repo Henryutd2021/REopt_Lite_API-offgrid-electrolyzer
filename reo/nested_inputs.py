@@ -1106,6 +1106,14 @@ nested_input_definitions = {
         }
       },
 
+      "CSP":{
+        "csp":{
+          "type": "bool",
+          "default": False,
+          "description": "Set to True to have default csp in the system"
+        }
+      },
+
       "PV": {
         "pv_name": {
           "type": "str",
