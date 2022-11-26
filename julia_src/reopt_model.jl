@@ -109,9 +109,11 @@ function add_parameters(m, p)
 	if !isempty(p.Tech)
 		m[:WindTechs] = p.TechsInClass["WIND"]
 		m[:GeneratorTechs] = p.TechsInClass["GENERATOR"]
+		m[:CSPTechs] = p.TechsInClass["CSP"]
 	else
 		m[:WindTechs] = []
 		m[:GeneratorTechs] = []
+		m[:CSPTechs]= []
 	end
 end
 
@@ -270,14 +272,14 @@ function add_bigM_adjustments(m, p)
 					for ts in p.TimeStepRatchetsMonth[mth]])  -
 					sum(m[:NewMaxDemandMonthsInTier][mth,np] for np in 1:(n-1))]
 				)
-                m[:NewMaxDemandMonthsInTier][mth,n] = 1.0E12
+                m[:NewMaxDemandMonthsInTier][mth,n] = 1.0E9
 			else
 				m[:NewMaxDemandMonthsInTier][mth,n] = minimum([p.MaxDemandMonthsInTier[n],
 					added_power + 2*maximum([p.ElecLoad[ts] + p.CoolingLoad[ts] +
                     add_ghp_heating_elec * p.HeatingLoad[ts]
 					for ts in p.TimeStepRatchetsMonth[mth]])]
                 )
-                m[:NewMaxDemandMonthsInTier][mth,n] = 1.0E12
+                m[:NewMaxDemandMonthsInTier][mth,n] = 1.0E9
 			end
 		end
 	end
@@ -292,14 +294,14 @@ function add_bigM_adjustments(m, p)
 					for ts in p.TimeStep])  -
 				sum(m[:NewMaxDemandInTier][r,ep] for ep in 1:(e-1))
 				])
-                m[:NewMaxDemandInTier][r,e] = 1.0E12
+                m[:NewMaxDemandInTier][r,e] = 1.0E9
 			else
 				m[:NewMaxDemandInTier][r,e] = minimum([p.MaxDemandInTier[e],
 				added_power + 2*maximum([p.ElecLoad[ts] + p.CoolingLoad[ts] +
                 add_ghp_heating_elec * p.HeatingLoad[ts]
 					for ts in p.TimeStep])
 				])
-                m[:NewMaxDemandInTier][r,e] = 1.0E12
+                m[:NewMaxDemandInTier][r,e] = 1.0E9
 			end
 		end
 	end
@@ -325,7 +327,7 @@ function add_bigM_adjustments(m, p)
         end
     else
         for mth in p.Month
-            m[:NewMaxUsageInTier][mth,1] = 1.0E12
+            m[:NewMaxUsageInTier][mth,1] = 1.0E9
         end
     end
 	# NewMaxSize generates a new maximum size that is equal to the largest monthly load of the year.
@@ -598,13 +600,13 @@ function add_mass_producer_constraints(m, p)
 	                m[:dvRatedProduction][t,ts] * p.ProductionFactor[t,ts]
 	                )
 	    # Wind Ratio
-	    if p.RatioFlag
-	        @constraint(m, WindRatio,
-	                sum(m[:dvElectricToMassProducer][t,ts] for t in m[:WindTechs], ts in p.TimeStep)/
-	                sum(p.TechClassMinSize["MASSPRODUCER"] * p.ProductionFactor[t,ts] * p.MassProducerConsumptionRatios["Electric"]
-                        for t in p.MassProducerTechs, ts in p.TimeStep) >= p.Ratio
-                    )
-        end
+# 	    if p.RatioFlag
+# 	        @constraint(m, WindRatio,
+# 	                sum(m[:dvElectricToMassProducer][t,ts] for t in m[:WindTechs], ts in p.TimeStep)/
+# 	                sum(p.TechClassMinSize["MASSPRODUCER"] * p.ProductionFactor[t,ts] * p.MassProducerConsumptionRatios["Electric"]
+#                         for t in p.MassProducerTechs, ts in p.TimeStep) >= p.Ratio
+#                     )
+#         end
 	end
 end
 
@@ -1115,6 +1117,10 @@ function add_no_grid_export_constraint(m, p)
 	end
 end
 
+function add_csp_size_constraint(m, p)
+	fix(m[:dvSize]["CSP"], 115000.0, force=true)
+end
+
 
 function add_energy_price_constraints(m, p)
 	##Constraint (10a): Usage limits by pricing tier, by month
@@ -1391,6 +1397,8 @@ function reopt_run(m, p::Parameter)
 	### Constraint set (5) - hot and cold thermal loads
 	add_thermal_load_constraints(m, p)
 
+	#add_csp_size_constraint(m, p)
+
 	### Constraint set (6): Production Incentive Cap
 	add_prod_incent_constraints(m, p)
     ### System Size and Production Constraints
@@ -1525,6 +1533,11 @@ function reopt_results(m, p, r::Dict)
 	else
 		add_null_wind_results(m, p, r)
 	end
+	if !isempty(m[:CSPTechs])
+		add_csp_results(m, p, r)
+	else
+		add_null_csp_results(m, p, r)
+	end
 	if !isempty(p.CHPTechs)
 		add_chp_results(m, p, r)
 	else
@@ -1625,6 +1638,18 @@ function add_null_wind_results(m, p, r::Dict)
 	r["WINDtoLoad"] = []
 	r["WINDtoGrid"] = []
     r["WINDtoMassProducer"] = []
+	nothing
+end
+
+function add_null_csp_results(m, p, r::Dict)
+    r["year_one_csp_electric_energy_produced"] = 0.0
+    r["chp_kw"] = 0.0
+    r["csp_electric_production_series"] = []
+	r["CSPtoLoad"] = []
+	r["CSPtoGrid"] = []
+    r["CSPtoMassProducer"] = []
+    r["csp_to_battery_series"] = []
+    r["CSPtoCurtail"] = []
 	nothing
 end
 
@@ -1940,6 +1965,50 @@ function add_wind_results(m, p, r::Dict)
 	r["average_wind_energy_produced"] = round(value(m[:AverageWindProd]), digits=0)
 	WindPerUnitSizeOMCosts = @expression(m, sum(p.OMperUnitSize[t] * p.pwf_om * m[:dvSize][t] for t in m[:WindTechs]))
     r["wind_net_fixed_om_costs"] = round(value(WindPerUnitSizeOMCosts) * m[:r_tax_fraction_owner], digits=0)
+	nothing
+end
+
+function add_csp_results(m, p, r::Dict)
+	r["csp_kw"] = round(value(sum(m[:dvSize][t] for t in m[:CSPTechs])), digits=1)
+	@expression(m, CSPtoBatt[ts in p.TimeStep],
+	            sum(sum(m[:dvProductionToStorage][b, t, ts] for t in m[:CSPTechs]) for b in p.ElecStorage))
+	r["CSPtoBatt"] = round.(value.(CSPtoBatt), digits=3)
+
+	@expression(m, CSPtoCurtail[ts in p.TimeStep],
+				sum(m[:dvProductionToCurtail][t,ts] for t in m[:CSPTechs]))
+
+	r["CSPtoCurtail"] = round.(value.(CSPtoCurtail), digits=3)
+
+# 	@expression(m, pf[ts in p.TimeStep], sum(p.ProductionFactor[t,ts] for t in m[:WindTechs])/2)
+# 	r["prod_factor"] = round.(value.(pf), digits=3)
+
+	r["CSPtoGrid"] = zeros(length(p.TimeStep))
+	if !isempty(p.ExportTiers)
+		@expression(m, CSPtoGrid[ts in p.TimeStep],
+					sum(m[:dvProductionToGrid][t,u,ts] for t in m[:CSPTechs], u in p.ExportTiersByTech[t]))
+		r["CSPtoGrid"] = round.(value.(CSPtoGrid), digits=3)
+	end
+
+	@expression(m, CSPtoMassProducer[ts in p.TimeStep],
+				sum(m[:dvElectricToMassProducer][t,ts] for t in m[:CSPTechs]))
+	r["CSPtoMassProducer"] = round.(value.(CSPtoMassProducer), digits=3)
+
+	@expression(m, CSPtoLoad[ts in p.TimeStep],
+				sum(m[:dvRatedProduction][t, ts] * p.ProductionFactor[t, ts] * p.LevelizationFactor[t]
+					for t in m[:CSPTechs]) - r["CSPtoGrid"][ts] - CSPtoBatt[ts] - CSPtoCurtail[ts] - CSPtoMassProducer[ts])
+	r["CSPtoLoad"] = round.(value.(CSPtoLoad), digits=3)
+# 	m[:Year1CSPProd] = @expression(m,
+# 		p.TimeStepScaling * sum(m[:dvRatedProduction][t,ts] * p.ProductionFactor[t, ts]
+# 			for t in m[:CSPTechs], ts in p.TimeStep)
+# 	)
+# 	r["year_one_csp_energy_produced"] = round(value(m[:Year1CSPProd]), digits=0)
+	m[:AverageCSPProd] = @expression(m,
+		p.TimeStepScaling * sum(m[:dvRatedProduction][t,ts] * p.ProductionFactor[t, ts] * p.LevelizationFactor[t]
+			for t in m[:CSPTechs], ts in p.TimeStep)
+	)
+    r["average_csp_energy_produced"] = round(value(m[:AverageCSPProd]), digits=0)
+# 	WindPerUnitSizeOMCosts = @expression(m, sum(p.OMperUnitSize[t] * p.pwf_om * m[:dvSize][t] for t in m[:WindTechs]))
+#     r["wind_net_fixed_om_costs"] = round(value(WindPerUnitSizeOMCosts) * m[:r_tax_fraction_owner], digits=0)
 	nothing
 end
 

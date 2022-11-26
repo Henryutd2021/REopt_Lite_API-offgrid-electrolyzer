@@ -28,22 +28,20 @@
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 # *********************************************************************************
 
-import json
-import PySAM.TcsmoltenSalt as csp # import the TcsmoltenSalt from PySAM
+import PySAM.TcsmoltenSalt as pycsp  # import the TcsmoltenSalt from PySAM
+import urllib.request as ur
 
-# create a new instance of the TcsmoltenSalt module
-csp_model = csp.new()
 
-# # get the inputs from the JSON file
-with open('csp_salt_tower.json', 'r') as f:
-        csp_inputs = json.load( f )
+url = 'https://developer.nrel.gov/api/nsrdb/v2/solar/psm3-download.csv?wkt=POINT(-96.78%2032.77)&names=2019&leap_day=' \
+      'false&interval=60&utc=false&full_name=henry_li&email=hxl210015@utdallas.edu&affiliation=ut-dallas&mailing_list=' \
+      'false&reason=beta_testing&api_key=86DIek0E1Nt1h5CZNNBY9KHC9ISpv7PNOLGbA90o&attributes=dhi,dni,ghi,dew_point,air_temperature,' \
+      'surface_pressure,relative_humidity,wind_direction,wind_speed,surface_albedo'
 
-# # iterate through the input key-value pairs and set the module inputs
-for k, v in csp_inputs.items():
-    if k != 'number_inputs':
-        csp_model.value(k, v)
+ur.urlretrieve(url, 'data.csv')
+def CSPCF():
+    csp_model = pycsp.default('MSPTSingleOwner')
+    csp_model.SolarResource.solar_resource_file = 'data.csv'
+    csp_model.execute()
+    prod_factor_original = [power * 1000 / csp_model.Outputs.system_capacity for power in csp_model.Outputs.P_out_net]
+    return prod_factor_original
 
-# # run the module
-csp_model.execute()
-
-#print(csp_model.Outputs.capacity_factor)

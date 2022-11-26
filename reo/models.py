@@ -1224,11 +1224,48 @@ class FuelCellModel(models.Model):
 class CSPModel(models.Model):
     # Inputs
     run_uuid = models.UUIDField(unique=True)
-    csp = models.BooleanField(null=True, blank=True)
+    cspflag = models.BooleanField(null=True, blank=True)
+    min_kw = models.FloatField(null=True, blank=True)
+    max_kw = models.FloatField(null=True, blank=True)
+    installed_cost_us_dollars_per_kw = models.FloatField(null=True, blank=True)
+    om_cost_us_dollars_per_kw = models.FloatField(null=True, blank=True)
+    macrs_option_years = models.IntegerField(null=True, blank=True)
+    macrs_bonus_pct = models.FloatField(null=True, blank=True)
+    macrs_itc_reduction = models.FloatField(null=True, blank=True)
+    federal_itc_pct = models.FloatField(null=True, blank=True)
+    state_ibi_pct = models.FloatField(null=True, blank=True)
+    state_ibi_max_us_dollars = models.FloatField(null=True, blank=True)
+    utility_ibi_pct = models.FloatField(null=True, blank=True)
+    utility_ibi_max_us_dollars = models.FloatField(null=True, blank=True)
+    federal_rebate_us_dollars_per_kw = models.FloatField(null=True, blank=True)
+    state_rebate_us_dollars_per_kw = models.FloatField(null=True, blank=True)
+    state_rebate_max_us_dollars = models.FloatField(null=True, blank=True)
+    utility_rebate_us_dollars_per_kw = models.FloatField(null=True, blank=True)
+    utility_rebate_max_us_dollars = models.FloatField(null=True, blank=True)
+    pbi_us_dollars_per_kwh = models.FloatField(null=True, blank=True)
+    pbi_max_us_dollars = models.FloatField(null=True, blank=True)
+    pbi_years = models.FloatField(null=True, blank=True)
+    pbi_system_max_kw = models.FloatField(null=True, blank=True)
+    can_net_meter = models.BooleanField(null=True, blank=True)
+    can_wholesale = models.BooleanField(null=True, blank=True)
+    can_export_beyond_site_load = models.BooleanField(null=True, blank=True)
+    can_curtail = models.BooleanField(null=True, blank=True)
 
     # Outputs
     size_kw = models.FloatField(null=True, blank=True)
     average_yearly_energy_produced_kwh = models.FloatField(null=True, blank=True)
+    year_one_electric_production_series_kw = ArrayField(
+        models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
+    year_one_to_battery_series_kw = ArrayField(
+        models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
+    year_one_to_load_series_kw = ArrayField(
+        models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
+    year_one_to_grid_series_kw = ArrayField(
+        models.FloatField(null=True, blank=True), default=list, null=True, blank=True)
+    year_one_to_massproducer_series_kw = ArrayField(
+        models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
+    year_one_curtailed_production_series_kw = ArrayField(
+        models.FloatField(null=True, blank=True), null=True, blank=True, default=list)
 
 
     @classmethod
@@ -1314,6 +1351,7 @@ class ModelManager(object):
         self.mass_producerM = None
         self.tankM = None
         self.fuelcellM = None
+        self.cspM = None
 
     def create_and_save(self, data):
         """
@@ -1371,6 +1409,8 @@ class ModelManager(object):
                                                        **attribute_inputs(d['Site']['Tank']))
         self.fuelcellM = FuelCellModel.create(run_uuid=self.scenarioM.run_uuid,
                                                 **attribute_inputs(d['Site']['FuelCell']))
+        self.cspM = CSPModel.create(run_uuid=self.scenarioM.run_uuid,
+                                              **attribute_inputs(d['Site']['CSP']))
         for message_type, message in data['messages'].items():
             MessageModel.create(run_uuid=self.scenarioM.run_uuid, message_type=message_type, message=message)
 
@@ -1415,6 +1455,7 @@ class ModelManager(object):
         TankModel.objects.filter(run_uuid=run_uuid).delete()
         MessageModel.objects.filter(run_uuid=run_uuid).delete()
         FuelCellModel.objects.filter(run_uuid=run_uuid).delete()
+        CSPModel.objects.filter(run_uuid=run_uuid).delete()
         ErrorModel.objects.filter(run_uuid=run_uuid).delete()
 
     @staticmethod
@@ -1457,6 +1498,7 @@ class ModelManager(object):
         MassProducerModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['MassProducer']))
         TankModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['Tank']))
         FuelCellModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['FuelCell']))
+        CSPModel.objects.filter(run_uuid=run_uuid).update(**attribute_inputs(d['Site']['CSP']))
 
         for message_type, message in data['messages'].items():
             if len(MessageModel.objects.filter(run_uuid=run_uuid, message=message)) > 0:
@@ -1671,6 +1713,10 @@ class ModelManager(object):
         fuelcell_record = FuelCellModel.objects.filter(run_uuid=run_uuid) or {}
         if not fuelcell_record == {}:
             resp['outputs']['Scenario']['Site']['FuelCell'] = remove_ids(model_to_dict(fuelcell_record[0]))
+
+        csp_record = CSPModel.objects.filter(run_uuid=run_uuid) or {}
+        if not csp_record == {}:
+            resp['outputs']['Scenario']['Site']['CSP'] = remove_ids(model_to_dict(csp_record[0]))
 
         resp['outputs']['Scenario']['Site']['PV'] = []
         for x in PVModel.objects.filter(run_uuid=run_uuid).order_by('pv_number'):

@@ -1107,10 +1107,176 @@ nested_input_definitions = {
       },
 
       "CSP":{
-        "csp":{
+        "cspflag":{
           "type": "bool",
           "default": False,
           "description": "Set to True to have default csp in the system"
+        },
+        "min_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "Minimum CSP size constraint for optimization"
+        },
+        "max_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 1.0e9,
+          "description": "Maximum CSP size constraint for optimization. Set to zero to disable PV"
+        },
+        "installed_cost_us_dollars_per_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e5,
+          "default": 6515.54,
+          "description": "Installed CSP cost in $/kW"
+        },
+        "om_cost_us_dollars_per_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e3,
+          "default": 66.0,
+          "description": "Annual CSP operations and maintenance costs in $/kW"
+        },
+        "macrs_option_years": {
+          "type": "int",
+          "restrict_to": macrs_schedules,
+          "default": 5,
+          "description": "Duration over which accelerated depreciation will occur. Set to zero to disable"
+        },
+        "macrs_bonus_pct": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 1.0,
+          "description": "Percent of upfront project costs to depreciate in year one in addition to scheduled depreciation"
+        },
+        "macrs_itc_reduction": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 0.5,
+          "description": "Percent of the ITC value by which depreciable basis is reduced"
+        },
+        "federal_itc_pct": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 0.26,
+          "description": "Percentage of capital costs that are credited towards federal taxes"
+        },
+        "state_ibi_pct": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 0.0,
+          "description": "Percentage of capital costs offset by state incentives"
+        },
+        "state_ibi_max_us_dollars": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e10,
+          "default": max_incentive,
+          "description": "Maximum dollar value of state percentage-based capital cost incentive"
+        },
+        "utility_ibi_pct": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0,
+          "default": 0.0,
+          "description": "Percentage of capital costs offset by utility incentives"
+        },
+        "utility_ibi_max_us_dollars": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e10,
+          "default": max_incentive,
+          "description": "Maximum dollar value of utility percentage-based capital cost incentive"
+        },
+        "federal_rebate_us_dollars_per_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "Federal rebates based on installed capacity"
+        },
+        "state_rebate_us_dollars_per_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "State rebate based on installed capacity"
+        },
+        "state_rebate_max_us_dollars": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e10,
+          "default": max_incentive,
+          "description": "Maximum state rebate"
+        },
+        "utility_rebate_us_dollars_per_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "Utility rebate based on installed capacity"
+        },
+        "utility_rebate_max_us_dollars": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e10,
+          "default": max_incentive,
+          "description": "Maximum utility rebate"
+        },
+        "pbi_us_dollars_per_kwh": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 0.0,
+          "description": "Production-based incentive value"
+        },
+        "pbi_max_us_dollars": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 1.0e9,
+          "description": "Maximum annual value in present terms of production-based incentives"
+        },
+        "pbi_years": {
+          "type": "float",
+          "min": 0.0,
+          "max": 100.0,
+          "default": 1.0,
+          "description": "Duration of production-based incentives from installation date"
+        },
+        "pbi_system_max_kw": {
+          "type": "float",
+          "min": 0.0,
+          "max": 1.0e9,
+          "default": 1.0e9,
+          "description": "Maximum system size eligible for production-based incentive"
+        },
+        "can_net_meter": {
+          "type": "bool",
+          "default": True,
+          "description": "True/False for if technology has option to participate in net metering agreement with utility. Note that a technology can only participate in either net metering or wholesale rates (not both)."
+        },
+        "can_wholesale": {
+          "type": "bool",
+          "default": True,
+          "description": "True/False for if technology has option to export energy that is compensated at the wholesale_rate_us_dollars_per_kwh. Note that a technology can only participate in either net metering or wholesale rates (not both)."
+        },
+        "can_export_beyond_site_load": {
+          "type": "bool",
+          "default": True,
+          "description": "True/False for if technology can export energy beyond the annual site load (and be compensated for that energy at the wholesale_rate_above_site_load_us_dollars_per_kwh)."
+        },
+        "can_curtail": {
+          "type": "bool",
+          "default": True,
+          "description": "True/False for if technology can curtail energy produced."
         }
       },
 

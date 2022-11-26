@@ -389,6 +389,36 @@ nested_output_definitions = {
                     "description": "Optimal PV system size",
                     "units": "kW"
                   },
+                  "year_one_electric_production_series_kw": {
+                    "type": "list_of_float",
+                    "description": "Year one CSP power production time series",
+                    "units": "kW"
+                  },
+                  "year_one_to_battery_series_kw": {
+                    "type": "list_of_float",
+                    "description": "Year one hourly time series of CSP charging",
+                    "units": "kW"
+                  },
+                  "year_one_to_load_series_kw": {
+                    "type": "list_of_float",
+                    "description": "Year one hourly time series of CSP serving load",
+                    "units": "kW"
+                },
+                  "year_one_to_grid_series_kw": {
+                    "type": "list_of_float",
+                    "description": "Year one hourly time series of CSP exporting to grid",
+                    "units": "kW"
+                },
+                  "year_one_to_massproducer_series_kw": {
+                    "type": "list_of_float",
+                    "description": "Year one hourly time series of CSP serving MassProducer electric consumption",
+                    "units": "kW"
+                },
+                "year_one_curtailed_production_series_kw": {
+                  "type": "list_of_float",
+                  "description": "Year one CSP power curtailed during outage time series",
+                  "units": "kW"
+                },
               },
 
               "PV": {

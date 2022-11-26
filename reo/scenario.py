@@ -45,7 +45,7 @@ from reo.src.load_profile_chiller_thermal import LoadProfileChillerThermal
 from reo.src.profiler import Profiler
 from reo.src.site import Site
 from reo.src.storage import Storage, HotTES, ColdTES, Tank
-from reo.src.techs import PV, Util, Wind, Generator, CHP, Boiler, ElectricChiller, AbsorptionChiller, NewBoiler, SteamTurbine, MassProducer, FuelCell
+from reo.src.techs import PV, Util, Wind, Generator, CHP, Boiler, ElectricChiller, AbsorptionChiller, NewBoiler, SteamTurbine, MassProducer, FuelCell, CSP
 from reo.src import ghp
 from celery import shared_task, Task
 from reo.models import ModelManager
@@ -54,6 +54,7 @@ from tastypie.test import TestApiClient
 from reo.utilities import TONHOUR_TO_KWHT, get_climate_zone_and_nearest_city
 from ghpghx.models import GHPGHXInputs
 from ghpghx.models import ModelManager as ghpModelManager
+
 
 class ScenarioTask(Task):
     """
@@ -451,6 +452,12 @@ def setup_scenario(self, run_uuid, data, raw_post):
             # Assign tmp["param"] = fuelcell.xyx
             ModelManager.updateModel('FuelCellModel', tmp, run_uuid)
 
+        if inputs_dict["Site"]["CSP"]["cspflag"] is True:
+            csp = CSP(dfm=dfm, **inputs_dict['Site']['CSP'])
+            tmp = dict()
+            # Assign tmp["param"] = fuelcell.xyx
+            ModelManager.updateModel('CSPModel', tmp, run_uuid)
+
 
         dfm.add_soc_incentive = inputs_dict['add_soc_incentive']
 
@@ -461,7 +468,7 @@ def setup_scenario(self, run_uuid, data, raw_post):
 
         for k in ['storage', 'hot_tes', 'cold_tes', 'tank', 'site', 'elec_tariff', 'fuel_tariff', 'pvs', 'pvnms',
                 'load', 'util', 'heating_load', 'cooling_load', 'newboiler', 'steamturbine', 'ghp_option_list',
-                'heating_load_space_heating', 'heating_load_dhw', 'massproducer', 'fuelcell'] + dfm.available_techs:
+                'heating_load_space_heating', 'heating_load_dhw', 'massproducer', 'fuelcell', 'csp'] + dfm.available_techs:
             if dfm_dict.get(k) is not None:
                 del dfm_dict[k]
 

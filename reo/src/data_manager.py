@@ -87,6 +87,7 @@ class DataManager:
         self.massproducer = None
         self.tank = None
         self.fuelcell = None
+        self.csp = None
 
         # following attributes used to pass data to process_results.py
         # If we serialize the python classes then we could pass the objects between Celery tasks
@@ -97,9 +98,9 @@ class DataManager:
         self.year_one_demand_cost_series_us_dollars_per_kw = []
 
         self.available_techs = ['pv1', 'pv1nm', 'wind', 'windnm', 'generator', 'chp', 'boiler',
-                                'elecchl', 'absorpchl', 'newboiler', 'steamturbine', 'massproducer', 'fuelcell']  # order is critical for REopt! Note these are passed to reopt.jl as uppercase
+                                'elecchl', 'absorpchl', 'newboiler', 'steamturbine', 'massproducer', 'fuelcell', 'csp']  # order is critical for REopt! Note these are passed to reopt.jl as uppercase
         self.available_tech_classes = ['PV1', 'WIND', 'GENERATOR', 'CHP', 'BOILER',
-                                       'ELECCHL', 'ABSORPCHL', 'NEWBOILER', 'STEAMTURBINE', 'MASSPRODUCER', 'FUELCELL']  # this is a REopt 'class', not a python class
+                                       'ELECCHL', 'ABSORPCHL', 'NEWBOILER', 'STEAMTURBINE', 'MASSPRODUCER', 'FUELCELL', 'CSP']  # this is a REopt 'class', not a python class
         self.bau_techs = []
         self.NMILRegime = ['BelowNM', 'NMtoIL', 'AboveIL']
         self.fuel_burning_techs = ['GENERATOR', 'CHP']
@@ -246,6 +247,9 @@ class DataManager:
     def add_fuelcell(self, fuelcell):
         self.fuelcell = fuelcell
 
+    def add_csp(self, csp):
+        self.csp = csp
+
     def _get_REopt_pwfs(self, techs):
         sf = self.site.financial
         pwf_owner = annuity(sf.analysis_years, 0, sf.owner_discount_pct) # not used in REopt
@@ -309,7 +313,7 @@ class DataManager:
 
             if eval('self.' + tech) is not None:
 
-                if tech not in ['generator', 'boiler', 'elecchl', 'absorpchl', 'newboiler', 'steamturbine', 'massproducer', 'fuelcell']:
+                if tech not in ['generator', 'boiler', 'elecchl', 'absorpchl', 'newboiler', 'steamturbine', 'massproducer', 'fuelcell', 'csp']:
 
                     # prod incentives don't need escalation
                     if tech.startswith("pv"):  # PV has degradation
@@ -1375,11 +1379,11 @@ class DataManager:
         fb_techs = [t for t in reopt_techs if t in self.fuel_burning_techs]
         fb_techs_bau = [t for t in reopt_techs_bau if t in self.fuel_burning_techs]
 
-        techs_no_turndown = [t for t in reopt_techs if t.startswith("PV") or t.startswith("WIND")]
+        techs_no_turndown = [t for t in reopt_techs if t.startswith("PV") or t.startswith("WIND")or t.startswith("CSP")]
         techs_no_turndown_bau = [t for t in reopt_techs_bau if t.startswith("PV") or t.startswith("WIND")]
 
-        electric_techs = [t for t in reopt_techs if t.startswith("PV") or t.startswith("WIND") or t.startswith("GENERATOR") or t.startswith("CHP") or t.lower().startswith('steamturbine') or t.lower().startswith('fuelcell')]
-        electric_techs_bau = [t for t in reopt_techs_bau if t.startswith("PV") or t.startswith("WIND") or t.startswith("GENERATOR") or t.startswith("CHP") or t.lower().startswith('steamturbine')]
+        electric_techs = [t for t in reopt_techs if t.startswith("PV") or t.startswith("WIND") or t.startswith("GENERATOR") or t.startswith("CHP") or t.lower().startswith('steamturbine') or t.lower().startswith('fuelcell')or t.lower().startswith('csp')]
+        electric_techs_bau = [t for t in reopt_techs_bau if t.startswith("PV") or t.startswith("WIND") or t.startswith("GENERATOR") or t.startswith("CHP") or t.lower().startswith('steamturbine')or t.lower().startswith('csp')]
 
         time_steps_with_grid, time_steps_without_grid = self._get_time_steps_with_grid()
 
@@ -1740,6 +1744,8 @@ class DataManager:
             #FUELCELL
             "HydrogenSlope": hydrogen_slope,
             'HydrogenUsingTechs': hu_techs,
+            #CSP
+            #'CSPFlag': self.csp,
 
             }
         ## Uncomment the following for debugging
@@ -1915,5 +1921,8 @@ class DataManager:
             # FUELCELL
             "HydrogenSlope": [],
             'HydrogenUsingTechs': hu_techs_bau,
+
+            # CSP
+            #'CSPFlag': self.csp,
 
         }

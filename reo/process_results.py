@@ -738,6 +738,23 @@ def process_results(self, dfm_list, data, meta, saveToDB=True):
                         data['inputs']['Scenario']["Site"]["Wind"]["federal_itc_pct"] = wind_model.federal_itc_pct
                     else:
                         self.nested_outputs["Scenario"]["Site"][name]['lcoe_us_dollars_per_kwh'] = None
+                elif name == "CSP":
+                    self.nested_outputs["Scenario"]["Site"][name]["size_kw"] = self.results_dict.get("csp_kw", 0)
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "average_yearly_energy_produced_kwh"] = self.results_dict.get("average_csp_energy_produced")
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "year_one_electric_production_series_kw"] = self.compute_total_power(name)
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "year_one_to_battery_series_kw"] = self.results_dict.get("CSPtoBatt")
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "year_one_to_massproducer_series_kw"] = self.results_dict.get("CSPtoMassProducer")
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "year_one_to_load_series_kw"] = self.results_dict.get("CSPtoLoad")
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "year_one_to_grid_series_kw"] = self.results_dict.get("CSPtoGrid")
+                    self.nested_outputs["Scenario"]["Site"][name][
+                        "year_one_curtailed_production_series_kw"] = self.results_dict.get("CSPtoCurtail")
+
                 elif name == "Storage":
                     self.nested_outputs["Scenario"]["Site"][name]["size_kw"] = self.results_dict.get("batt_kw", 0)
                     self.nested_outputs["Scenario"]["Site"][name]["size_kwh"] = self.results_dict.get("batt_kwh", 0)
