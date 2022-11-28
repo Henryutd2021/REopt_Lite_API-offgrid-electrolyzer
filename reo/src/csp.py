@@ -42,6 +42,6 @@ def CSPCF():
     csp_model = pycsp.default('MSPTSingleOwner')
     csp_model.SolarResource.solar_resource_file = 'data.csv'
     csp_model.execute()
-    prod_factor_original = [power * 1000 / csp_model.Outputs.system_capacity for power in csp_model.Outputs.P_out_net]
+    prod_factor_original = [1.0 if power * 1000 / csp_model.Outputs.system_capacity >= 1 else 0.0 for power in csp_model.Outputs.P_out_net]
     return prod_factor_original
 
