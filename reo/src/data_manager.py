@@ -1579,6 +1579,11 @@ class DataManager:
             hydrogen_slope = []
             hu_techs = []
 
+        if self.wind is not None:
+            wind_ratio = self.wind.ratio
+        else:
+            wind_ratio = 0
+
 
 
         self.reopt_inputs = {
@@ -1721,7 +1726,7 @@ class DataManager:
             'CHPSupplementaryFireMaxRatio': supplementary_firing_max_steam_ratio,
             'CHPSupplementaryFireEfficiency': supplementary_firing_efficiency,
             'CapCostSupplementaryFiring': supplementary_firing_capital_cost_per_kw,
-            'Ratio': self.wind.ratio,
+            'Ratio': wind_ratio,
             #Offgrid
             'OffGridFlag': self.off_grid_flag,
             'TechsRequiringSR': techs_requiring_sr,
@@ -1898,7 +1903,7 @@ class DataManager:
             'CHPSupplementaryFireMaxRatio': supplementary_firing_max_steam_ratio,
             'CHPSupplementaryFireEfficiency': supplementary_firing_efficiency,
             'CapCostSupplementaryFiring': supplementary_firing_capital_cost_per_kw_bau,
-            'Ratio': self.wind.ratio,
+            'Ratio': wind_ratio,
             # Offgrid
             'OffGridFlag': False, #self.off_grid_flag,
             'TechsRequiringSR': techs_requiring_sr,
