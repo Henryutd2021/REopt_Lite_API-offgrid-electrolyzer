@@ -453,7 +453,11 @@ def setup_scenario(self, run_uuid, data, raw_post):
             ModelManager.updateModel('FuelCellModel', tmp, run_uuid)
 
         if inputs_dict["Site"]["CSP"]["cspflag"] is True:
-            csp = CSP(dfm=dfm, **inputs_dict['Site']['CSP'])
+            csp = CSP(dfm=dfm,
+                      latitude=inputs_dict['Site'].get('latitude'),
+                      longitude=inputs_dict['Site'].get('longitude'),
+                      time_steps_per_hour=inputs_dict.get('time_steps_per_hour'),
+                      **inputs_dict['Site']['CSP'])
             tmp = dict()
             # Assign tmp["param"] = fuelcell.xyx
             ModelManager.updateModel('CSPModel', tmp, run_uuid)

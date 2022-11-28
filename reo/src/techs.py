@@ -30,7 +30,7 @@
 from reo.src.data_manager import big_number
 from reo.src.pvwatts import PVWatts
 from reo.src.wind import WindSAMSDK
-from reo.src.csp import CSPCF
+from reo.src.csp import CSPSAM
 from reo.src.incentives import Incentives, IncentivesNoProdBased
 from reo.utilities import TONHOUR_TO_KWHT, generate_year_profile_hourly, MMBTU_TO_KWH
 import os
@@ -949,6 +949,6 @@ class CSP(Tech):
 
     @property
     def prod_factor(self):
-        fc_prod_factor = CSPCF()
-
-        return fc_prod_factor
+        sam = CSPSAM(time_steps_per_hour=self.time_steps_per_hour, **self.kwargs)
+        sam_prod_factor = sam.CSPPF()
+        return sam_prod_factor
