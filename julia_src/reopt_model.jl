@@ -1118,7 +1118,9 @@ function add_no_grid_export_constraint(m, p)
 end
 
 function add_csp_size_constraint(m, p)
-	fix(m[:dvSize]["CSP"], 115000.0, force=true)
+    for t in p.TechsInClass["CSP"]
+	    fix(m[:dvSize][t], 115000.0, force=true)
+	end
 end
 
 
@@ -1397,7 +1399,7 @@ function reopt_run(m, p::Parameter)
 	### Constraint set (5) - hot and cold thermal loads
 	add_thermal_load_constraints(m, p)
 
-	#add_csp_size_constraint(m, p)
+	add_csp_size_constraint(m, p)
 
 	### Constraint set (6): Production Incentive Cap
 	add_prod_incent_constraints(m, p)
