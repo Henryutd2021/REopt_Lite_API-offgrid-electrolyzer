@@ -34,6 +34,7 @@ from keys import developer_nrel_gov_key
 from .wind import time_step_hour_to_minute_interval_lookup
 import logging
 log = logging.getLogger(__name__)
+import numpy as np
 
 class CSPSAM():
 
@@ -89,8 +90,13 @@ class CSPSAM():
         csp_model = pycsp.default('MSPTSingleOwner')
         csp_model.SolarResource.solar_resource_file = 'data.csv'
         csp_model.execute()
-        prod_factor_original = [1.0 if power * 1000 / csp_model.Outputs.system_capacity >= 1 else 0.0 for power in
+        prod_factor_original = [power * 1000 / csp_model.Outputs.system_capacity for power in
                                 csp_model.Outputs.P_out_net]
+        for i, x in enumerate(prod_factor_original):
+            if x >= 1:
+                prod_factor_original[i] = 1.0
+            elif x <= 0:
+                prod_factor_original[i] = 0.0
         return prod_factor_original
 
 
